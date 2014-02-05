@@ -202,7 +202,7 @@ class vytux_cousins_WT_Module extends WT_Module implements WT_Module_Tab {
 						break;
 					}
 				}
-				if ($pedi && $pedi != 'birth') {
+				if (isset($pedi) && $pedi != 'birth') {
 					$label = '<span class="cousins_pedi">'.WT_Gedcom_Code_Pedi::getValue($pedi, $record).'</span>';
 				}
 				if ($cousinParentFamily != $prev_fam_id) {
@@ -245,7 +245,7 @@ class vytux_cousins_WT_Module extends WT_Module implements WT_Module_Tab {
 						break;
 					}
 				}
-				if ($pedi && $pedi != 'birth') {
+				if (isset($pedi) && $pedi != 'birth') {
 					$label = '<span class="cousins_pedi">'.WT_Gedcom_Code_Pedi::getValue($pedi, $record).'</span>';
 				}
 				if ($cousinParentFamily != $prev_fam_id) {
