@@ -84,6 +84,7 @@ class vytux_cousins_WT_Module extends WT_Module implements WT_Module_Tab {
 	// Implement WT_Module_Tab
 	public function getTabContent() {
 		global $controller;
+		global $TEXT_DIRECTION;
 		$list_f=array();
 		$list_f2=array();
 		$list_f3=array();
@@ -214,7 +215,7 @@ class vytux_cousins_WT_Module extends WT_Module implements WT_Module_Tab {
 			$html .= '<div class="person_box'.$isF.'">';
 			$html .= '<span class="cousins_counter">'.$i.'</span>';
 			$html .= '<span class="cousins_name"><a target="_blank" href="'. $record->getHtmlUrl(). '">'. $record->getFullName().'</a></span>';
-			$html .= '<span class="cousins_lifespan">'. $record->getLifeSpan(). '</span>';
+			$html .= '<span class="cousins_lifespan" dir="'.$TEXT_DIRECTION.'">'. $record->getLifeSpan(). '</span>';
 			$html .= '<span class="cousins_pedi">'.$label.'</span>';
 			$html .= '</div>';
 		}
@@ -257,7 +258,7 @@ class vytux_cousins_WT_Module extends WT_Module implements WT_Module_Tab {
 			$html .= '<div class="person_box'.$isF.'">';
 			$html .= '<span class="cousins_counter">'.$i.'</span>';
 			$html .= '<span class="cousins_name"><a target="_blank" href="'. $record->getHtmlUrl(). '">'. $record->getFullName().'</a></span>';
-			$html .= '<span class="cousins_lifespan">'. $record->getLifeSpan(). '</span>';
+			$html .= '<span class="cousins_lifespan" dir="'.$TEXT_DIRECTION.'">'. $record->getLifeSpan(). '</span>';
 			$html .= '<span class="cousins_pedi">'.$label.'</span>';
 			$html .= '</div>';
 		}
@@ -281,5 +282,4 @@ class vytux_cousins_WT_Module extends WT_Module implements WT_Module_Tab {
 	public function getPreLoadContent() {
 		return '';
 	}
-
 }
