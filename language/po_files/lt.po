@@ -1,0 +1,53 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: vytux_cousins\n"
+"POT-Creation-Date: 2013-06-30 11:46+1200\n"
+"PO-Revision-Date: 2014-04-30 08:06+0200\n"
+"Last-Translator: Vytautas Krivickas <vytautas.krivickas@gmail.com>\n"
+"Language-Team: Vytux <webmaster@vytux.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.4\n"
+"X-Poedit-KeywordsList: translate;noop;plural:1,2\n"
+"X-Poedit-Basepath: ..\\..\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n"
+"%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"Language: lt\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: module.php:58
+msgid "Cousins"
+msgstr "Pusbroliai / Pusseserės"
+
+#: module.php:63
+msgid "A tab showing cousins of an individual."
+msgstr "Lapas rodantis asmens pusbrolius ir pusseseres"
+
+#: module.php:113
+msgid "No family available"
+msgstr "Šeima nerasta"
+
+#: module.php:176
+#, php-format
+msgid "%2$s has %1$d first cousin recorded"
+msgid_plural "%2$s has %1$d first cousins recorded"
+msgstr[0] "%2$s turi %1$d įrašyta pirmos eilės pusbrolį/pusseserę"
+msgstr[1] "%2$s turi %1$d įrašytus pirmos eilės pusbrolius/pusseseres"
+msgstr[2] "%2$s turi %1$d įrašytų pirmos eilės pusbrolių/pusseserių"
+
+#: module.php:181
+#, php-format
+msgid "Father's family (%s)"
+msgstr "Tėvo šeima (%s)"
+
+# Do not translate. Already in webtrees core
+#: module.php:203 module.php:242
+msgid "Parents"
+msgstr ""
+
+#: module.php:219
+#, php-format
+msgid "Mother's family (%s)"
+msgstr "Motinos šeima (%s)"
