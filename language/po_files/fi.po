@@ -39,6 +39,7 @@ msgid "Mother's family (%s)"
 msgstr "Äidin perhe (%s)"
 
 # Do not translate. Already in webtrees core
+#. Do not translate. Already in webtrees core.
 #: module.php:203 module.php:242
 msgid "Parents"
 msgstr ""
