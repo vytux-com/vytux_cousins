@@ -29,9 +29,10 @@ namespace Webtrees;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 use PDO;
+use Zend_Registry;
 
 class vytux_cousins_WT_Module extends Module implements ModuleTabInterface {
-/*
+
 	public function __construct() {
 		parent::__construct();
 		// Load any local user translations
@@ -53,7 +54,7 @@ class vytux_cousins_WT_Module extends Module implements ModuleTabInterface {
 			}
 		}
 	}
-*/	
+	
 	// Extend WT_Module
 	public function getTitle() {
 		return /* I18N: Name of a module/tab on the individual page. */ I18N::translate('Cousins');
