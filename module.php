@@ -1,5 +1,5 @@
 <?php
-namespace Webtrees;
+namespace Fisharebest\Webtrees;
 
 /*
  * webtrees - vytux_cousins tab based on simpl_cousins
