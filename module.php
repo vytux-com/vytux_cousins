@@ -36,20 +36,20 @@ class vytux_cousins_WT_Module extends Module implements ModuleTabInterface {
 	public function __construct() {
 		parent::__construct();
 		// Load any local user translations
-		if (is_dir(WT_MODULES_DIR.$this->getName().'/language')) {
-			if (file_exists(WT_MODULES_DIR.$this->getName().'/language/'.WT_LOCALE.'.mo')) {
+		if (is_dir(WT_MODULES_DIR . $this->getName() . '/language')) {
+			if (file_exists(WT_MODULES_DIR . $this->getName() . '/language/' . WT_LOCALE . '.mo')) {
 				I18N::addTranslation(
-					new Zend_Translate('gettext', WT_MODULES_DIR.$this->getName().'/language/'.WT_LOCALE.'.mo', WT_LOCALE)
+					new Zend_Translate('gettext', WT_MODULES_DIR . $this->getName() . '/language/' . WT_LOCALE . '.mo', WT_LOCALE)
 				);
 			}
-			if (file_exists(WT_MODULES_DIR.$this->getName().'/language/'.WT_LOCALE.'.php')) {
+			if (file_exists(WT_MODULES_DIR . $this->getName() . '/language/' . WT_LOCALE . '.php')) {
 				I18N::addTranslation(
-					new Zend_Translate('array', WT_MODULES_DIR.$this->getName().'/language/'.WT_LOCALE.'.php', WT_LOCALE)
+					new Zend_Translate('array', WT_MODULES_DIR . $this->getName() . '/language/' . WT_LOCALE . '.php', WT_LOCALE)
 				);
 			}
-			if (file_exists(WT_MODULES_DIR.$this->getName().'/language/'.WT_LOCALE.'.csv')) {
+			if (file_exists(WT_MODULES_DIR . $this->getName() . '/language/' . WT_LOCALE . '.csv')) {
 				I18N::addTranslation(
-					new Zend_Translate('csv', WT_MODULES_DIR.$this->getName().'/language/'.WT_LOCALE.'.csv', WT_LOCALE)
+					new Zend_Translate('csv', WT_MODULES_DIR . $this->getName() . '/language/' . WT_LOCALE . '.csv', WT_LOCALE)
 				);
 			}
 		}
@@ -84,15 +84,23 @@ class vytux_cousins_WT_Module extends Module implements ModuleTabInterface {
 	public function getTabContent() {
 		global $controller;
 		global $TEXT_DIRECTION;
-		$list_f=array();
-		$list_f2=array();
-		$list_f3=array();
-		$list_m=array();
-		$list_m2=array();
-		$list_m3=array();
+		
+		$list_f          = array();
+		$list_f2         = array();
+		$list_f3         = array();
+		$list_m          = array();
+		$list_m2         = array();
+		$list_m3         = array();
+		$sql_f           = '';
+		$sql_f2          = '';
+		$sql_f3          = '';
+		$sql_m           = '';
+		$sql_m2          = '';
+		$sql_m3          = '';
 		$count_cousins_f = 0;
 		$count_cousins_m = 0;
-		$family = '';
+		$family          = '';
+		
 		$html = '<style type="text/css">
 				#vytux_cousins {width:98%;}
 				#vytux_cousins h3 {margin:10px 20px;}
@@ -107,9 +115,10 @@ class vytux_cousins_WT_Module extends Module implements ModuleTabInterface {
 				.cousins_counter:after {content:". ";}
 				</style>';
 
-		$person = $controller->getSignificantIndividual();
-		$fullname =  $controller->record->getFullName();
-		$xref =  $controller->record->getXref();
+		$person   = $controller->getSignificantIndividual();
+		$fullname = $controller->record->getFullName();
+		$xref     = $controller->record->getXref();
+		
 		if ($person->getPrimaryChildFamily()) {
 			$parentFamily = $person->getPrimaryChildFamily();
 		} else {
@@ -117,11 +126,13 @@ class vytux_cousins_WT_Module extends Module implements ModuleTabInterface {
 			return $html;
 			exit;
 		}
+		
 		if ($parentFamily->getHusband()) {
 			$grandparentFamilyHusb = $parentFamily->getHusband()->getPrimaryChildFamily();
 		} else {
 			$grandparentFamilyHusb = '';
 		}
+		
 		if ($parentFamily->getWife()) {
 			$grandparentFamilyWife = $parentFamily->getWife()->getPrimaryChildFamily();
 		} else {
@@ -129,45 +140,45 @@ class vytux_cousins_WT_Module extends Module implements ModuleTabInterface {
 		}
 
 		//Lookup father's siblings
-		$rows=Database::prepare("SELECT l_to as xref, MIN(d_julianday1) as date, '' as name FROM `##link` JOIN `##dates` ON l_to = d_gid AND d_file = l_file WHERE l_file = ".WT_GED_ID." AND l_type LIKE 'CHIL' AND l_from LIKE '".substr($grandparentFamilyHusb, 0, strpos($grandparentFamilyHusb, '@')) ."' AND d_fact = 'BIRT' GROUP BY 1 UNION SELECT l_to as xref, 9999999, n_givn FROM `##link` JOIN `##name` ON l_to = n_id AND l_file = n_file WHERE l_file = ".WT_GED_ID." AND l_type = 'CHIL' AND l_from LIKE '".substr($grandparentFamilyHusb, 0, strpos($grandparentFamilyHusb, '@')) ."' AND NOT EXISTS (SELECT d_julianday1 FROM `##dates` WHERE l_to = d_gid and d_fact = 'BIRT') AND n_type = 'NAME' GROUP BY 1 ORDER BY 2, 3 ")->fetchAll(PDO::FETCH_ASSOC);
+		$rows = Database::prepare("SELECT l_to as xref, MIN(d_julianday1) as date, '' as name FROM `##link` JOIN `##dates` ON l_to = d_gid AND d_file = l_file WHERE l_file = " . WT_GED_ID . " AND l_type LIKE 'CHIL' AND l_from LIKE '" . substr($grandparentFamilyHusb, 0, strpos($grandparentFamilyHusb, '@')) . "' AND d_fact = 'BIRT' GROUP BY 1 UNION SELECT l_to as xref, 9999999, n_givn FROM `##link` JOIN `##name` ON l_to = n_id AND l_file = n_file WHERE l_file = " . WT_GED_ID . " AND l_type = 'CHIL' AND l_from LIKE '" . substr($grandparentFamilyHusb, 0, strpos($grandparentFamilyHusb, '@')) . "' AND NOT EXISTS (SELECT d_julianday1 FROM `##dates` WHERE l_to = d_gid and d_fact = 'BIRT') AND n_type = 'NAME' GROUP BY 1 ORDER BY 2, 3 ")->fetchAll(PDO::FETCH_ASSOC);
 		foreach ($rows as $row) {
 			if ($row['xref'] != substr($parentFamily->getHusband(), 0, strpos($parentFamily->getHusband(), '@')))
-				$list_f[]=$row['xref'];
+				$list_f[] = $row['xref'];
 		}
 		//Lookup Aunt & Uncle's families (father's family)
 		foreach ($list_f as $ids) {
-			$rows=Database::prepare("SELECT l_from as xref FROM `##link` WHERE l_file = ".WT_GED_ID." AND (l_type LIKE 'HUSB' OR l_type LIKE 'WIFE') AND l_to LIKE '".$ids."'")->fetchAll(PDO::FETCH_ASSOC);
+			$rows = Database::prepare("SELECT l_from as xref FROM `##link` WHERE l_file = " . WT_GED_ID . " AND (l_type LIKE 'HUSB' OR l_type LIKE 'WIFE') AND l_to LIKE '" . $ids . "'")->fetchAll(PDO::FETCH_ASSOC);
 			foreach ($rows as $row) {
-				$list_f2[]=$row['xref'];
+				$list_f2[] = $row['xref'];
 			}
 		}
 		//Lookup cousins (father's family)
 		foreach ($list_f2 as $id2) {
-			$rows=Database::prepare("SELECT l_to as xref, MIN(d_julianday1) as date, '' as name FROM `##link` JOIN `##dates` ON l_to = d_gid AND d_file = l_file WHERE l_file = ".WT_GED_ID." AND l_type LIKE 'CHIL' AND l_from LIKE '".$id2."' AND d_fact = 'BIRT' GROUP BY 1 UNION SELECT l_to as xref, 9999999, n_givn FROM `##link` JOIN `##name` ON l_to = n_id AND l_file = n_file WHERE l_file = ".WT_GED_ID." AND l_type = 'CHIL' AND l_from LIKE '".$id2."' AND NOT EXISTS (SELECT d_julianday1 FROM `##dates` WHERE l_to = d_gid and d_fact = 'BIRT') AND n_type = 'NAME' GROUP BY 1 ORDER BY 2, 3 ")->fetchAll(PDO::FETCH_ASSOC);
+			$rows = Database::prepare("SELECT l_to as xref, MIN(d_julianday1) as date, '' as name FROM `##link` JOIN `##dates` ON l_to = d_gid AND d_file = l_file WHERE l_file = " . WT_GED_ID . " AND l_type LIKE 'CHIL' AND l_from LIKE '" . $id2 . "' AND d_fact = 'BIRT' GROUP BY 1 UNION SELECT l_to as xref, 9999999, n_givn FROM `##link` JOIN `##name` ON l_to = n_id AND l_file = n_file WHERE l_file = " . WT_GED_ID . " AND l_type = 'CHIL' AND l_from LIKE '" . $id2 . "' AND NOT EXISTS (SELECT d_julianday1 FROM `##dates` WHERE l_to = d_gid and d_fact = 'BIRT') AND n_type = 'NAME' GROUP BY 1 ORDER BY 2, 3 ")->fetchAll(PDO::FETCH_ASSOC);
 			foreach ($rows as $row) {
-				$list_f3[]=$row['xref'];
+				$list_f3[] = $row['xref'];
 				$count_cousins_f ++;
 			}
 		}
 
 		//Lookup mother's siblings
-		$rows=Database::prepare("SELECT l_to as xref, MIN(d_julianday1) as date, '' as name FROM `##link` JOIN `##dates` ON l_to = d_gid AND d_file = l_file WHERE l_file = ".WT_GED_ID." AND l_type LIKE 'CHIL' AND l_from LIKE '".substr($grandparentFamilyWife, 0, strpos($grandparentFamilyWife, '@')) ."' AND d_fact = 'BIRT' GROUP BY 1 UNION SELECT l_to as xref, 9999999, n_givn FROM `##link` JOIN `##name` ON l_to = n_id AND l_file = n_file WHERE l_file = ".WT_GED_ID." AND l_type = 'CHIL' AND l_from LIKE '".substr($grandparentFamilyWife, 0, strpos($grandparentFamilyWife, '@')) ."' AND NOT EXISTS (SELECT d_julianday1 FROM `##dates` WHERE l_to = d_gid and d_fact = 'BIRT') AND n_type = 'NAME' GROUP BY 1 ORDER BY 2, 3 ")->fetchAll(PDO::FETCH_ASSOC);
+		$rows = Database::prepare("SELECT l_to as xref, MIN(d_julianday1) as date, '' as name FROM `##link` JOIN `##dates` ON l_to = d_gid AND d_file = l_file WHERE l_file = " . WT_GED_ID . " AND l_type LIKE 'CHIL' AND l_from LIKE '" . substr($grandparentFamilyWife, 0, strpos($grandparentFamilyWife, '@')) . "' AND d_fact = 'BIRT' GROUP BY 1 UNION SELECT l_to as xref, 9999999, n_givn FROM `##link` JOIN `##name` ON l_to = n_id AND l_file = n_file WHERE l_file = " . WT_GED_ID . " AND l_type = 'CHIL' AND l_from LIKE '" . substr($grandparentFamilyWife, 0, strpos($grandparentFamilyWife, '@')) . "' AND NOT EXISTS (SELECT d_julianday1 FROM `##dates` WHERE l_to = d_gid and d_fact = 'BIRT') AND n_type = 'NAME' GROUP BY 1 ORDER BY 2, 3 ")->fetchAll(PDO::FETCH_ASSOC);
 		foreach ($rows as $row) {
 			if ($row['xref'] != substr($parentFamily->getWife(), 0, strpos($parentFamily->getWife(), '@')))
-				$list_m[]=$row['xref'];
+				$list_m[] = $row['xref'];
 		}
 		//Lookup Aunt & Uncle's families (mother's family)
 		foreach ($list_m as $ids) {
-			$rows=Database::prepare("SELECT l_from as xref FROM `##link` WHERE l_file = ".WT_GED_ID." AND (l_type LIKE 'HUSB' OR l_type LIKE 'WIFE') AND l_to LIKE '".$ids."'")->fetchAll(PDO::FETCH_ASSOC);
+			$rows = Database::prepare("SELECT l_from as xref FROM `##link` WHERE l_file = " . WT_GED_ID . " AND (l_type LIKE 'HUSB' OR l_type LIKE 'WIFE') AND l_to LIKE '" . $ids . "'")->fetchAll(PDO::FETCH_ASSOC);
 			foreach ($rows as $row) {
-				$list_m2[]=$row['xref'];
+				$list_m2[] = $row['xref'];
 			}
 		}
 		//Lookup cousins (mother's family)
 		foreach ($list_m2 as $id2) {
-			$rows=Database::prepare("SELECT l_to as xref, MIN(d_julianday1) as date, '' as name FROM `##link` JOIN `##dates` ON l_to = d_gid AND d_file = l_file WHERE l_file = ".WT_GED_ID." AND l_type LIKE 'CHIL' AND l_from LIKE '".$id2."' AND d_fact = 'BIRT' GROUP BY 1 UNION SELECT l_to as xref, 9999999, n_givn FROM `##link` JOIN `##name` ON l_to = n_id AND l_file = n_file WHERE l_file = ".WT_GED_ID." AND l_type = 'CHIL' AND l_from LIKE '".$id2."' AND NOT EXISTS (SELECT d_julianday1 FROM `##dates` WHERE l_to = d_gid and d_fact = 'BIRT') AND n_type = 'NAME' GROUP BY 1 ORDER BY 2, 3 ")->fetchAll(PDO::FETCH_ASSOC);
+			$rows = Database::prepare("SELECT l_to as xref, MIN(d_julianday1) as date, '' as name FROM `##link` JOIN `##dates` ON l_to = d_gid AND d_file = l_file WHERE l_file = " . WT_GED_ID . " AND l_type LIKE 'CHIL' AND l_from LIKE '" . $id2 . "' AND d_fact = 'BIRT' GROUP BY 1 UNION SELECT l_to as xref, 9999999, n_givn FROM `##link` JOIN `##name` ON l_to = n_id AND l_file = n_file WHERE l_file = " . WT_GED_ID . " AND l_type = 'CHIL' AND l_from LIKE '" . $id2 . "' AND NOT EXISTS (SELECT d_julianday1 FROM `##dates` WHERE l_to = d_gid and d_fact = 'BIRT') AND n_type = 'NAME' GROUP BY 1 ORDER BY 2, 3 ")->fetchAll(PDO::FETCH_ASSOC);
 			foreach ($rows as $row) {
-				$list_m3[]=$row['xref'];
+				$list_m3[] = $row['xref'];
 				$count_cousins_m ++;
 				$famc[] = $id2;
 			}
@@ -176,25 +187,25 @@ class vytux_cousins_WT_Module extends Module implements ModuleTabInterface {
 
 		$myParentFamily = $parentFamily->getXref();
 		
-		$html .= '<h3>'.I18N::plural('%2$s has %1$d first cousin recorded', '%2$s has %1$d first cousins recorded', $count_cousins, $count_cousins, $fullname).'</h3>';
+		$html .= '<h3>' . I18N::plural('%2$s has %1$d first cousin recorded', '%2$s has %1$d first cousins recorded', $count_cousins, $count_cousins, $fullname) . '</h3>';
 		$html .= '<div id="vytux_cousins_content">';
 
 		//List Cousins (father's family)
 		$html .= '<div id="cousins_f">';
-		$html .= '<h4>'.I18N::translate('Father\'s family (%s)', $count_cousins_f).'</h4>';
+		$html .= '<h4>' . I18N::translate('Father\'s family (%s)', $count_cousins_f) . '</h4>';
 		$i = 0;
 		$prev_fam_id = -1;
 		foreach ($list_f3 as $id3) {
 			$i++;
-			$record=Individual::getInstance($id3);
+			$record = Individual::getInstance($id3);
 			if ($record->getPrimaryChildFamily()) {
-				$primaryChildFamily=$record->getPrimaryChildFamily();
+				$primaryChildFamily = $record->getPrimaryChildFamily();
 				$cousinParentFamily = substr($primaryChildFamily, 0, strpos($primaryChildFamily, '@'));
 				if ( $cousinParentFamily == $myParentFamily )
 					continue; // cannot be cousin to self
-				$family=Family::getInstance($cousinParentFamily);
-				$tmp=array('M'=>'', 'F'=>'F', 'U'=>'NN');
-				$isF=$tmp[$record->getSex()];
+				$family = Family::getInstance($cousinParentFamily);
+				$tmp = array('M'=>'', 'F'=>'F', 'U'=>'NN');
+				$isF = $tmp[$record->getSex()];
 				$label = '';
 				foreach ($record->getFacts('FAMC') as $fact) {
 					if ($fact->getTarget() === $record->getPrimaryChildFamily()) {
@@ -203,19 +214,19 @@ class vytux_cousins_WT_Module extends Module implements ModuleTabInterface {
 					}
 				}
 				if (isset($pedi) && $pedi != 'birth') {
-					$label = '<span class="cousins_pedi">'.WT_Gedcom_Code_Pedi::getValue($pedi, $record).'</span>';
+					$label = '<span class="cousins_pedi">' . WT_Gedcom_Code_Pedi::getValue($pedi, $record) . '</span>';
 				}
 				if ($cousinParentFamily != $prev_fam_id) {
 					$prev_fam_id = $cousinParentFamily;
-					$html .= '<h5>'./* I18N: Do not translate. Already in webtrees core */ I18N::translate('Parents').'<a target="_blank" href="'. $family->getHtmlUrl(). '">&nbsp;'.$family->getFullName().'</a></h5>';
+					$html .= '<h5>' . /* I18N: Do not translate. Already in webtrees core */ I18N::translate('Parents') . '<a target="_blank" href="' . $family->getHtmlUrl() . '">&nbsp;' . $family->getFullName() . '</a></h5>';
 					$i = 1;	
 				}
 			}
-			$html .= '<div class="person_box'.$isF.'">';
-			$html .= '<span class="cousins_counter">'.$i.'</span>';
-			$html .= '<span class="cousins_name"><a target="_blank" href="'. $record->getHtmlUrl(). '">'. $record->getFullName().'</a></span>';
-			$html .= '<span class="cousins_lifespan" dir="'.$TEXT_DIRECTION.'">'. $record->getLifeSpan(). '</span>';
-			$html .= '<span class="cousins_pedi">'.$label.'</span>';
+			$html .= '<div class="person_box' . $isF . '">';
+			$html .= '<span class="cousins_counter">' . $i . '</span>';
+			$html .= '<span class="cousins_name"><a target="_blank" href="' . $record->getHtmlUrl() . '">' . $record->getFullName() .'</a></span>';
+			$html .= '<span class="cousins_lifespan" dir="' . $TEXT_DIRECTION . '">' . $record->getLifeSpan() . '</span>';
+			$html .= '<span class="cousins_pedi">' . $label . '</span>';
 			$html .= '</div>';
 		}
 		$html .= '</div>'; // close id="cousins_f"
@@ -223,21 +234,21 @@ class vytux_cousins_WT_Module extends Module implements ModuleTabInterface {
 		//List Cousins (mother's family)
 		$prev_fam_id = -1;
 		$html .= '<div id="cousins_m">';
-		$html .= '<h4>'.I18N::translate('Mother\'s family (%s)', $count_cousins_m).'</h4>';
+		$html .= '<h4>' . I18N::translate('Mother\'s family (%s)', $count_cousins_m) . '</h4>';
 		$i = 0;
 		foreach ($list_m3 as $id3) {
 			$i++;
-			$record=Individual::getInstance($id3);
+			$record = Individual::getInstance($id3);
 			if ($record->getPrimaryChildFamily()) {
-				$primaryChildFamily=$record->getPrimaryChildFamily();
+				$primaryChildFamily = $record->getPrimaryChildFamily();
 				$cousinParentFamily = substr($primaryChildFamily, 0, strpos($primaryChildFamily, '@'));
 				if ( $cousinParentFamily == $myParentFamily )
 					continue; // cannot be cousin to self
-				$record=Individual::getInstance($id3);
+				$record = Individual::getInstance($id3);
 				$cousinParentFamily = substr($primaryChildFamily, 0, strpos($primaryChildFamily, '@'));
-				$family=Family::getInstance($cousinParentFamily);
-				$tmp=array('M'=>'', 'F'=>'F', 'U'=>'NN');
-				$isF=$tmp[$record->getSex()];
+				$family = Family::getInstance($cousinParentFamily);
+				$tmp = array('M'=>'', 'F'=>'F', 'U'=>'NN');
+				$isF = $tmp[$record->getSex()];
 				$label = '';
 				foreach ($record->getFacts('FAMC') as $fact) {
 					if ($fact->getTarget() === $record->getPrimaryChildFamily()) {
@@ -246,25 +257,24 @@ class vytux_cousins_WT_Module extends Module implements ModuleTabInterface {
 					}
 				}
 				if (isset($pedi) && $pedi != 'birth') {
-					$label = '<span class="cousins_pedi">'.WT_Gedcom_Code_Pedi::getValue($pedi, $record).'</span>';
+					$label = '<span class="cousins_pedi">' . WT_Gedcom_Code_Pedi::getValue($pedi, $record) . '</span>';
 				}
 				if ($cousinParentFamily != $prev_fam_id) {
 					$prev_fam_id = $cousinParentFamily;
-					$html .= '<h5>'./* I18N: Do not translate. Already in webtrees core */ I18N::translate('Parents').'<a target="_blank" href="'. $family->getHtmlUrl(). '">&nbsp;'.$family->getFullName().'</a></h5>';
+					$html .= '<h5>' . /* I18N: Do not translate. Already in webtrees core */ I18N::translate('Parents') . '<a target="_blank" href="' . $family->getHtmlUrl() . '">&nbsp;' . $family->getFullName() . '</a></h5>';
 					$i = 1;
 				}
 			}
-			$html .= '<div class="person_box'.$isF.'">';
-			$html .= '<span class="cousins_counter">'.$i.'</span>';
-			$html .= '<span class="cousins_name"><a target="_blank" href="'. $record->getHtmlUrl(). '">'. $record->getFullName().'</a></span>';
-			$html .= '<span class="cousins_lifespan" dir="'.$TEXT_DIRECTION.'">'. $record->getLifeSpan(). '</span>';
-			$html .= '<span class="cousins_pedi">'.$label.'</span>';
+			$html .= '<div class="person_box' . $isF . '">';
+			$html .= '<span class="cousins_counter">' . $i . '</span>';
+			$html .= '<span class="cousins_name"><a target="_blank" href="' . $record->getHtmlUrl() . '">' . $record->getFullName() . '</a></span>';
+			$html .= '<span class="cousins_lifespan" dir="' . $TEXT_DIRECTION . '">' . $record->getLifeSpan() . '</span>';
+			$html .= '<span class="cousins_pedi">' . $label . '</span>';
 			$html .= '</div>';
 		}
 		$html .= '</div>'; // close id="cousins_m"
 		$html .= '</div>'; // close div id="vytux_cousins_content"
 		return $html;
-		
 	}
 
 	// Implement WT_Module_Tab
