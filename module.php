@@ -97,6 +97,12 @@ class vytux_cousins_WT_Module extends Module implements ModuleTabInterface {
 		$sql_m           = '';
 		$sql_m2          = '';
 		$sql_m3          = '';
+		$args_f           = '';
+		$args_f2          = '';
+		$args_f3          = '';
+		$args_m           = '';
+		$args_m2          = '';
+		$args_m3          = '';
 		$count_cousins_f = 0;
 		$count_cousins_m = 0;
 		$family          = '';
@@ -138,23 +144,60 @@ class vytux_cousins_WT_Module extends Module implements ModuleTabInterface {
 		} else {
 			$grandparentFamilyWife = '';
 		}
-
+		
 		//Lookup father's siblings
-		$rows = Database::prepare("SELECT l_to as xref, MIN(d_julianday1) as date, '' as name FROM `##link` JOIN `##dates` ON l_to = d_gid AND d_file = l_file WHERE l_file = " . WT_GED_ID . " AND l_type LIKE 'CHIL' AND l_from LIKE '" . substr($grandparentFamilyHusb, 0, strpos($grandparentFamilyHusb, '@')) . "' AND d_fact = 'BIRT' GROUP BY 1 UNION SELECT l_to as xref, 9999999, n_givn FROM `##link` JOIN `##name` ON l_to = n_id AND l_file = n_file WHERE l_file = " . WT_GED_ID . " AND l_type = 'CHIL' AND l_from LIKE '" . substr($grandparentFamilyHusb, 0, strpos($grandparentFamilyHusb, '@')) . "' AND NOT EXISTS (SELECT d_julianday1 FROM `##dates` WHERE l_to = d_gid and d_fact = 'BIRT') AND n_type = 'NAME' GROUP BY 1 ORDER BY 2, 3 ")->fetchAll(PDO::FETCH_ASSOC);
+		$sql_f  = "SELECT l_to as xref, MIN(d_julianday1) as date, n_givn as name ";
+		$sql_f .= "FROM `wt_link` ";
+		$sql_f .= "LEFT JOIN `wt_dates` ON l_to = d_gid AND d_file = l_file AND d_fact = 'BIRT' ";
+		$sql_f .= "LEFT JOIN `wt_name` ON l_to = n_id AND l_file = n_file AND n_type = 'NAME' ";
+		$sql_f .= "WHERE l_file = :tree_id ";
+		$sql_f .= "AND l_type LIKE 'CHIL' ";
+		$sql_f .= "AND l_from LIKE :family_id ";
+		$sql_f .= "GROUP BY xref ";
+		$sql_f .= "ORDER BY -MIN(d_julianday1) DESC, n_givn ASC";
+				
+		$args_f['tree_id']   = WT_GED_ID;
+		$args_f['family_id'] = substr($grandparentFamilyHusb, 0, strpos($grandparentFamilyHusb, '@'));
+		
+		$rows = Database::prepare($sql_f)->execute($args_f)->fetchAll(PDO::FETCH_ASSOC);
 		foreach ($rows as $row) {
 			if ($row['xref'] != substr($parentFamily->getHusband(), 0, strpos($parentFamily->getHusband(), '@')))
 				$list_f[] = $row['xref'];
 		}
+		
 		//Lookup Aunt & Uncle's families (father's family)
 		foreach ($list_f as $ids) {
-			$rows = Database::prepare("SELECT l_from as xref FROM `##link` WHERE l_file = " . WT_GED_ID . " AND (l_type LIKE 'HUSB' OR l_type LIKE 'WIFE') AND l_to LIKE '" . $ids . "'")->fetchAll(PDO::FETCH_ASSOC);
+			$sql_f2  = "SELECT l_from as xref ";
+			$sql_f2 .= "FROM `##link` ";
+			$sql_f2 .= "WHERE l_file = :tree_id ";
+			$sql_f2 .= "AND (l_type LIKE 'HUSB' OR l_type LIKE 'WIFE') ";
+			$sql_f2 .= "AND l_to LIKE :family_id";
+			
+			$args_f2['tree_id']   = WT_GED_ID;
+			$args_f2['family_id'] = $ids;
+			
+			$rows = Database::prepare($sql_f2)->execute($args_f2)->fetchAll(PDO::FETCH_ASSOC);
 			foreach ($rows as $row) {
 				$list_f2[] = $row['xref'];
 			}
 		}
+		
 		//Lookup cousins (father's family)
 		foreach ($list_f2 as $id2) {
-			$rows = Database::prepare("SELECT l_to as xref, MIN(d_julianday1) as date, '' as name FROM `##link` JOIN `##dates` ON l_to = d_gid AND d_file = l_file WHERE l_file = " . WT_GED_ID . " AND l_type LIKE 'CHIL' AND l_from LIKE '" . $id2 . "' AND d_fact = 'BIRT' GROUP BY 1 UNION SELECT l_to as xref, 9999999, n_givn FROM `##link` JOIN `##name` ON l_to = n_id AND l_file = n_file WHERE l_file = " . WT_GED_ID . " AND l_type = 'CHIL' AND l_from LIKE '" . $id2 . "' AND NOT EXISTS (SELECT d_julianday1 FROM `##dates` WHERE l_to = d_gid and d_fact = 'BIRT') AND n_type = 'NAME' GROUP BY 1 ORDER BY 2, 3 ")->fetchAll(PDO::FETCH_ASSOC);
+			$sql_f3  = "SELECT l_to as xref, MIN(d_julianday1) as date, n_givn as name ";
+			$sql_f3 .= "FROM `wt_link` ";
+			$sql_f3 .= "LEFT JOIN `wt_dates` ON l_to = d_gid AND d_file = l_file AND d_fact = 'BIRT' ";
+			$sql_f3 .= "LEFT JOIN `wt_name` ON l_to = n_id AND l_file = n_file AND n_type = 'NAME' ";
+			$sql_f3 .= "WHERE l_file = :tree_id ";
+			$sql_f3 .= "AND l_type LIKE 'CHIL' ";
+			$sql_f3 .= "AND l_from LIKE :family_id ";
+			$sql_f3 .= "GROUP BY xref ";
+			$sql_f3 .= "ORDER BY -MIN(d_julianday1) DESC, n_givn ASC";
+					
+			$args_f3['tree_id']   = WT_GED_ID;
+			$args_f3['family_id'] = $id2;
+			
+			$rows  = Database::prepare($sql_f3)->execute($args_f3)->fetchAll(PDO::FETCH_ASSOC);
 			foreach ($rows as $row) {
 				$list_f3[] = $row['xref'];
 				$count_cousins_f ++;
@@ -162,29 +205,65 @@ class vytux_cousins_WT_Module extends Module implements ModuleTabInterface {
 		}
 
 		//Lookup mother's siblings
-		$rows = Database::prepare("SELECT l_to as xref, MIN(d_julianday1) as date, '' as name FROM `##link` JOIN `##dates` ON l_to = d_gid AND d_file = l_file WHERE l_file = " . WT_GED_ID . " AND l_type LIKE 'CHIL' AND l_from LIKE '" . substr($grandparentFamilyWife, 0, strpos($grandparentFamilyWife, '@')) . "' AND d_fact = 'BIRT' GROUP BY 1 UNION SELECT l_to as xref, 9999999, n_givn FROM `##link` JOIN `##name` ON l_to = n_id AND l_file = n_file WHERE l_file = " . WT_GED_ID . " AND l_type = 'CHIL' AND l_from LIKE '" . substr($grandparentFamilyWife, 0, strpos($grandparentFamilyWife, '@')) . "' AND NOT EXISTS (SELECT d_julianday1 FROM `##dates` WHERE l_to = d_gid and d_fact = 'BIRT') AND n_type = 'NAME' GROUP BY 1 ORDER BY 2, 3 ")->fetchAll(PDO::FETCH_ASSOC);
+		$sql_m  = "SELECT l_to as xref, MIN(d_julianday1) as date, n_givn as name ";
+		$sql_m .= "FROM `wt_link` ";
+		$sql_m .= "LEFT JOIN `wt_dates` ON l_to = d_gid AND d_file = l_file AND d_fact = 'BIRT' ";
+		$sql_m .= "LEFT JOIN `wt_name` ON l_to = n_id AND l_file = n_file AND n_type = 'NAME' ";
+		$sql_m .= "WHERE l_file = :tree_id ";
+		$sql_m .= "AND l_type LIKE 'CHIL' ";
+		$sql_m .= "AND l_from LIKE :family_id ";
+		$sql_m .= "GROUP BY xref ";
+		$sql_m .= "ORDER BY -MIN(d_julianday1) DESC, n_givn ASC";
+				
+		$args_m['tree_id']   = WT_GED_ID;
+		$args_m['family_id'] = substr($grandparentFamilyWife, 0, strpos($grandparentFamilyWife, '@'));
+		
+		$rows = Database::prepare($sql_m)->execute($args_m)->fetchAll(PDO::FETCH_ASSOC);
 		foreach ($rows as $row) {
 			if ($row['xref'] != substr($parentFamily->getWife(), 0, strpos($parentFamily->getWife(), '@')))
 				$list_m[] = $row['xref'];
 		}
+		
 		//Lookup Aunt & Uncle's families (mother's family)
 		foreach ($list_m as $ids) {
-			$rows = Database::prepare("SELECT l_from as xref FROM `##link` WHERE l_file = " . WT_GED_ID . " AND (l_type LIKE 'HUSB' OR l_type LIKE 'WIFE') AND l_to LIKE '" . $ids . "'")->fetchAll(PDO::FETCH_ASSOC);
+			$sql_m2  = "SELECT l_from as xref ";
+			$sql_m2 .= "FROM `##link` ";
+			$sql_m2 .= "WHERE l_file = :tree_id ";
+			$sql_m2 .= "AND (l_type LIKE 'HUSB' OR l_type LIKE 'WIFE') ";
+			$sql_m2 .= "AND l_to LIKE :family_id";
+			
+			$args_m2['tree_id']   = WT_GED_ID;
+			$args_m2['family_id'] = $ids;
+			
+			$rows = Database::prepare($sql_m2)->execute($args_m2)->fetchAll(PDO::FETCH_ASSOC);
 			foreach ($rows as $row) {
 				$list_m2[] = $row['xref'];
 			}
 		}
+		
 		//Lookup cousins (mother's family)
 		foreach ($list_m2 as $id2) {
-			$rows = Database::prepare("SELECT l_to as xref, MIN(d_julianday1) as date, '' as name FROM `##link` JOIN `##dates` ON l_to = d_gid AND d_file = l_file WHERE l_file = " . WT_GED_ID . " AND l_type LIKE 'CHIL' AND l_from LIKE '" . $id2 . "' AND d_fact = 'BIRT' GROUP BY 1 UNION SELECT l_to as xref, 9999999, n_givn FROM `##link` JOIN `##name` ON l_to = n_id AND l_file = n_file WHERE l_file = " . WT_GED_ID . " AND l_type = 'CHIL' AND l_from LIKE '" . $id2 . "' AND NOT EXISTS (SELECT d_julianday1 FROM `##dates` WHERE l_to = d_gid and d_fact = 'BIRT') AND n_type = 'NAME' GROUP BY 1 ORDER BY 2, 3 ")->fetchAll(PDO::FETCH_ASSOC);
+			$sql_m3  = "SELECT l_to as xref, MIN(d_julianday1) as date, n_givn as name ";
+			$sql_m3 .= "FROM `wt_link` ";
+			$sql_m3 .= "LEFT JOIN `wt_dates` ON l_to = d_gid AND d_file = l_file AND d_fact = 'BIRT' ";
+			$sql_m3 .= "LEFT JOIN `wt_name` ON l_to = n_id AND l_file = n_file AND n_type = 'NAME' ";
+			$sql_m3 .= "WHERE l_file = :tree_id ";
+			$sql_m3 .= "AND l_type LIKE 'CHIL' ";
+			$sql_m3 .= "AND l_from LIKE :family_id ";
+			$sql_m3 .= "GROUP BY xref ";
+			$sql_m3 .= "ORDER BY -MIN(d_julianday1) DESC, n_givn ASC";
+					
+			$args_m3['tree_id']   = WT_GED_ID;
+			$args_m3['family_id'] = $id2;
+			
+			$rows = Database::prepare($sql_m3)->execute($args_m3)->fetchAll(PDO::FETCH_ASSOC);
 			foreach ($rows as $row) {
 				$list_m3[] = $row['xref'];
 				$count_cousins_m ++;
-				$famc[] = $id2;
 			}
-		}		
-		$count_cousins = $count_cousins_f + $count_cousins_m;
-
+		}
+		
+		$count_cousins  = $count_cousins_f + $count_cousins_m;
 		$myParentFamily = $parentFamily->getXref();
 		
 		$html .= '<h3>' . I18N::plural('%2$s has %1$d first cousin recorded', '%2$s has %1$d first cousins recorded', $count_cousins, $count_cousins, $fullname) . '</h3>';
