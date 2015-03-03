@@ -31,9 +31,9 @@ namespace Fisharebest\Webtrees;
 use PDO;
 use Zend_Translate;
 
-class vytux_cousins_WT_Module extends Module implements ModuleTabInterface {
+class VytuxCousinsModule extends Module implements ModuleTabInterface {
 
-	public function __construct() {
+	public function __construct('vytux_cousins') {
 		parent::__construct();
 		// Load any local user translations
 		if (is_dir(WT_MODULES_DIR . $this->getName() . '/language')) {
@@ -370,4 +370,4 @@ class vytux_cousins_WT_Module extends Module implements ModuleTabInterface {
 	public function getPreLoadContent() {
 		return '';
 	}
-}
+} return new VytuxCousinsModule
