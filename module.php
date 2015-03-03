@@ -33,8 +33,8 @@ use Zend_Translate;
 
 class VytuxCousinsModule extends Module implements ModuleTabInterface {
 
-	public function __construct('vytux_cousins') {
-		parent::__construct();
+	public function __construct() {
+		parent::__construct('vytux_cousins');
 		// Load any local user translations
 		if (is_dir(WT_MODULES_DIR . $this->getName() . '/language')) {
 			if (file_exists(WT_MODULES_DIR . $this->getName() . '/language/' . WT_LOCALE . '.mo')) {
@@ -370,4 +370,6 @@ class VytuxCousinsModule extends Module implements ModuleTabInterface {
 	public function getPreLoadContent() {
 		return '';
 	}
-} return new VytuxCousinsModule
+	
+return new VytuxCousinsModule'
+}
