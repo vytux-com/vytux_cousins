@@ -370,6 +370,6 @@ class VytuxCousinsModule extends Module implements ModuleTabInterface {
 	public function getPreLoadContent() {
 		return '';
 	}
-	
-return new VytuxCousinsModule'
 }
+
+return new VytuxCousinsModule;
