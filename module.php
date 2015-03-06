@@ -1,5 +1,5 @@
 <?php
-namespace Fisharebest\Webtrees;
+namespace Vytux\Webtrees_vytux_cousins;
 
 /*
  * webtrees - vytux_cousins tab based on simpl_cousins
@@ -30,25 +30,26 @@ namespace Fisharebest\Webtrees;
 */
 use PDO;
 use Zend_Translate;
+use Fisharebest\Webtrees as webtrees;
 
-class VytuxCousinsModule extends Module implements ModuleTabInterface {
+class VytuxCousinsModule extends webtrees\Module implements webtrees\ModuleTabInterface {
 
 	public function __construct() {
 		parent::__construct('vytux_cousins');
 		// Load any local user translations
 		if (is_dir(WT_MODULES_DIR . $this->getName() . '/language')) {
 			if (file_exists(WT_MODULES_DIR . $this->getName() . '/language/' . WT_LOCALE . '.mo')) {
-				I18N::addTranslation(
+				webtrees\I18N::addTranslation(
 					new Zend_Translate('gettext', WT_MODULES_DIR . $this->getName() . '/language/' . WT_LOCALE . '.mo', WT_LOCALE)
 				);
 			}
 			if (file_exists(WT_MODULES_DIR . $this->getName() . '/language/' . WT_LOCALE . '.php')) {
-				I18N::addTranslation(
+				webtrees\I18N::addTranslation(
 					new Zend_Translate('array', WT_MODULES_DIR . $this->getName() . '/language/' . WT_LOCALE . '.php', WT_LOCALE)
 				);
 			}
 			if (file_exists(WT_MODULES_DIR . $this->getName() . '/language/' . WT_LOCALE . '.csv')) {
-				I18N::addTranslation(
+				webtrees\I18N::addTranslation(
 					new Zend_Translate('csv', WT_MODULES_DIR . $this->getName() . '/language/' . WT_LOCALE . '.csv', WT_LOCALE)
 				);
 			}
@@ -57,12 +58,12 @@ class VytuxCousinsModule extends Module implements ModuleTabInterface {
 	
 	// Extend WT_Module
 	public function getTitle() {
-		return /* I18N: Name of a module/tab on the individual page. */ I18N::translate('Cousins');
+		return /* I18N: Name of a module/tab on the individual page. */ webtrees\I18N::translate('Cousins');
 	}
 
 	// Extend WT_Module
 	public function getDescription() {
-		return /* I18N: Description of the "Facts and events" module */ I18N::translate('A tab showing cousins of an individual.');
+		return /* I18N: Description of the "Facts and events" module */ webtrees\I18N::translate('A tab showing cousins of an individual.');
 	}
 
 	// Implement WT_Module_Tab
@@ -128,7 +129,7 @@ class VytuxCousinsModule extends Module implements ModuleTabInterface {
 		if ($person->getPrimaryChildFamily()) {
 			$parentFamily = $person->getPrimaryChildFamily();
 		} else {
-			$html .= '<h3>'.I18N::translate('No family available').'</h3>';
+			$html .= '<h3>'.webtrees\I18N::translate('No family available').'</h3>';
 			return $html;
 			exit;
 		}
@@ -159,7 +160,7 @@ class VytuxCousinsModule extends Module implements ModuleTabInterface {
 		$args_f['tree_id']   = WT_GED_ID;
 		$args_f['family_id'] = substr($grandparentFamilyHusb, 0, strpos($grandparentFamilyHusb, '@'));
 		
-		$rows = Database::prepare($sql_f)->execute($args_f)->fetchAll(PDO::FETCH_ASSOC);
+		$rows = webtrees\Database::prepare($sql_f)->execute($args_f)->fetchAll(PDO::FETCH_ASSOC);
 		foreach ($rows as $row) {
 			if ($row['xref'] != substr($parentFamily->getHusband(), 0, strpos($parentFamily->getHusband(), '@')))
 				$list_f[] = $row['xref'];
@@ -176,7 +177,7 @@ class VytuxCousinsModule extends Module implements ModuleTabInterface {
 			$args_f2['tree_id']   = WT_GED_ID;
 			$args_f2['family_id'] = $ids;
 			
-			$rows = Database::prepare($sql_f2)->execute($args_f2)->fetchAll(PDO::FETCH_ASSOC);
+			$rows = webtrees\Database::prepare($sql_f2)->execute($args_f2)->fetchAll(PDO::FETCH_ASSOC);
 			foreach ($rows as $row) {
 				$list_f2[] = $row['xref'];
 			}
@@ -197,7 +198,7 @@ class VytuxCousinsModule extends Module implements ModuleTabInterface {
 			$args_f3['tree_id']   = WT_GED_ID;
 			$args_f3['family_id'] = $id2;
 			
-			$rows  = Database::prepare($sql_f3)->execute($args_f3)->fetchAll(PDO::FETCH_ASSOC);
+			$rows  = webtrees\Database::prepare($sql_f3)->execute($args_f3)->fetchAll(PDO::FETCH_ASSOC);
 			foreach ($rows as $row) {
 				$list_f3[] = $row['xref'];
 				$count_cousins_f ++;
@@ -218,7 +219,7 @@ class VytuxCousinsModule extends Module implements ModuleTabInterface {
 		$args_m['tree_id']   = WT_GED_ID;
 		$args_m['family_id'] = substr($grandparentFamilyWife, 0, strpos($grandparentFamilyWife, '@'));
 		
-		$rows = Database::prepare($sql_m)->execute($args_m)->fetchAll(PDO::FETCH_ASSOC);
+		$rows = webtrees\Database::prepare($sql_m)->execute($args_m)->fetchAll(PDO::FETCH_ASSOC);
 		foreach ($rows as $row) {
 			if ($row['xref'] != substr($parentFamily->getWife(), 0, strpos($parentFamily->getWife(), '@')))
 				$list_m[] = $row['xref'];
@@ -235,7 +236,7 @@ class VytuxCousinsModule extends Module implements ModuleTabInterface {
 			$args_m2['tree_id']   = WT_GED_ID;
 			$args_m2['family_id'] = $ids;
 			
-			$rows = Database::prepare($sql_m2)->execute($args_m2)->fetchAll(PDO::FETCH_ASSOC);
+			$rows = webtrees\Database::prepare($sql_m2)->execute($args_m2)->fetchAll(PDO::FETCH_ASSOC);
 			foreach ($rows as $row) {
 				$list_m2[] = $row['xref'];
 			}
@@ -256,7 +257,7 @@ class VytuxCousinsModule extends Module implements ModuleTabInterface {
 			$args_m3['tree_id']   = WT_GED_ID;
 			$args_m3['family_id'] = $id2;
 			
-			$rows = Database::prepare($sql_m3)->execute($args_m3)->fetchAll(PDO::FETCH_ASSOC);
+			$rows = webtrees\Database::prepare($sql_m3)->execute($args_m3)->fetchAll(PDO::FETCH_ASSOC);
 			foreach ($rows as $row) {
 				$list_m3[] = $row['xref'];
 				$count_cousins_m ++;
@@ -266,23 +267,23 @@ class VytuxCousinsModule extends Module implements ModuleTabInterface {
 		$count_cousins  = $count_cousins_f + $count_cousins_m;
 		$myParentFamily = $parentFamily->getXref();
 		
-		$html .= '<h3>' . I18N::plural('%2$s has %1$d first cousin recorded', '%2$s has %1$d first cousins recorded', $count_cousins, $count_cousins, $fullname) . '</h3>';
+		$html .= '<h3>' . webtrees\I18N::plural('%2$s has %1$d first cousin recorded', '%2$s has %1$d first cousins recorded', $count_cousins, $count_cousins, $fullname) . '</h3>';
 		$html .= '<div id="vytux_cousins_content">';
 
 		//List Cousins (father's family)
 		$html .= '<div id="cousins_f">';
-		$html .= '<h4>' . I18N::translate('Father\'s family (%s)', $count_cousins_f) . '</h4>';
+		$html .= '<h4>' . webtrees\I18N::translate('Father\'s family (%s)', $count_cousins_f) . '</h4>';
 		$i = 0;
 		$prev_fam_id = -1;
 		foreach ($list_f3 as $id3) {
 			$i++;
-			$record = Individual::getInstance($id3);
+			$record = webtrees\Individual::getInstance($id3);
 			if ($record->getPrimaryChildFamily()) {
 				$primaryChildFamily = $record->getPrimaryChildFamily();
 				$cousinParentFamily = substr($primaryChildFamily, 0, strpos($primaryChildFamily, '@'));
 				if ( $cousinParentFamily == $myParentFamily )
 					continue; // cannot be cousin to self
-				$family = Family::getInstance($cousinParentFamily);
+				$family = webtrees\Family::getInstance($cousinParentFamily);
 				$tmp = array('M'=>'', 'F'=>'F', 'U'=>'NN');
 				$isF = $tmp[$record->getSex()];
 				$label = '';
@@ -293,11 +294,11 @@ class VytuxCousinsModule extends Module implements ModuleTabInterface {
 					}
 				}
 				if (isset($pedi) && $pedi != 'birth') {
-					$label = '<span class="cousins_pedi">' . WT_Gedcom_Code_Pedi::getValue($pedi, $record) . '</span>';
+					$label = '<span class="cousins_pedi">' . webtrees\GedcomCodePedi::getValue($pedi, $record) . '</span>';
 				}
 				if ($cousinParentFamily != $prev_fam_id) {
 					$prev_fam_id = $cousinParentFamily;
-					$html .= '<h5>' . /* I18N: Do not translate. Already in webtrees core */ I18N::translate('Parents') . '<a target="_blank" href="' . $family->getHtmlUrl() . '">&nbsp;' . $family->getFullName() . '</a></h5>';
+					$html .= '<h5>' . /* I18N: Do not translate. Already in webtrees core */ webtrees\I18N::translate('Parents') . '<a target="_blank" href="' . $family->getHtmlUrl() . '">&nbsp;' . $family->getFullName() . '</a></h5>';
 					$i = 1;	
 				}
 			}
@@ -313,19 +314,19 @@ class VytuxCousinsModule extends Module implements ModuleTabInterface {
 		//List Cousins (mother's family)
 		$prev_fam_id = -1;
 		$html .= '<div id="cousins_m">';
-		$html .= '<h4>' . I18N::translate('Mother\'s family (%s)', $count_cousins_m) . '</h4>';
+		$html .= '<h4>' . webtrees\I18N::translate('Mother\'s family (%s)', $count_cousins_m) . '</h4>';
 		$i = 0;
 		foreach ($list_m3 as $id3) {
 			$i++;
-			$record = Individual::getInstance($id3);
+			$record = webtrees\Individual::getInstance($id3);
 			if ($record->getPrimaryChildFamily()) {
 				$primaryChildFamily = $record->getPrimaryChildFamily();
 				$cousinParentFamily = substr($primaryChildFamily, 0, strpos($primaryChildFamily, '@'));
 				if ( $cousinParentFamily == $myParentFamily )
 					continue; // cannot be cousin to self
-				$record = Individual::getInstance($id3);
+				$record = webtrees\Individual::getInstance($id3);
 				$cousinParentFamily = substr($primaryChildFamily, 0, strpos($primaryChildFamily, '@'));
-				$family = Family::getInstance($cousinParentFamily);
+				$family = webtrees\Family::getInstance($cousinParentFamily);
 				$tmp = array('M'=>'', 'F'=>'F', 'U'=>'NN');
 				$isF = $tmp[$record->getSex()];
 				$label = '';
@@ -336,11 +337,11 @@ class VytuxCousinsModule extends Module implements ModuleTabInterface {
 					}
 				}
 				if (isset($pedi) && $pedi != 'birth') {
-					$label = '<span class="cousins_pedi">' . WT_Gedcom_Code_Pedi::getValue($pedi, $record) . '</span>';
+					$label = '<span class="cousins_pedi">' . webtrees\GedcomCodePedi::getValue($pedi, $record) . '</span>';
 				}
 				if ($cousinParentFamily != $prev_fam_id) {
 					$prev_fam_id = $cousinParentFamily;
-					$html .= '<h5>' . /* I18N: Do not translate. Already in webtrees core */ I18N::translate('Parents') . '<a target="_blank" href="' . $family->getHtmlUrl() . '">&nbsp;' . $family->getFullName() . '</a></h5>';
+					$html .= '<h5>' . /* I18N: Do not translate. Already in webtrees core */ webtrees\I18N::translate('Parents') . '<a target="_blank" href="' . $family->getHtmlUrl() . '">&nbsp;' . $family->getFullName() . '</a></h5>';
 					$i = 1;
 				}
 			}
