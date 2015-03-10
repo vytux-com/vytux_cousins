@@ -277,7 +277,7 @@ class VytuxCousinsTabModule extends webtrees\Module implements webtrees\ModuleTa
 		$prev_fam_id = -1;
 		foreach ($list_f3 as $id3) {
 			$i++;
-			$record = webtrees\Individual::getInstance($id3);
+			$record = webtrees\Individual::getInstance($id3, $WT_TREE);
 			if ($record->getPrimaryChildFamily()) {
 				$primaryChildFamily = $record->getPrimaryChildFamily();
 				$cousinParentFamily = substr($primaryChildFamily, 0, strpos($primaryChildFamily, '@'));
@@ -318,13 +318,13 @@ class VytuxCousinsTabModule extends webtrees\Module implements webtrees\ModuleTa
 		$i = 0;
 		foreach ($list_m3 as $id3) {
 			$i++;
-			$record = webtrees\Individual::getInstance($id3);
+			$record = webtrees\Individual::getInstance($id3, $WT_TREE);
 			if ($record->getPrimaryChildFamily()) {
 				$primaryChildFamily = $record->getPrimaryChildFamily();
 				$cousinParentFamily = substr($primaryChildFamily, 0, strpos($primaryChildFamily, '@'));
 				if ( $cousinParentFamily == $myParentFamily )
 					continue; // cannot be cousin to self
-				$record = webtrees\Individual::getInstance($id3);
+				$record = webtrees\Individual::getInstance($id3, $WT_TREE);
 				$cousinParentFamily = substr($primaryChildFamily, 0, strpos($primaryChildFamily, '@'));
 				$family = webtrees\Family::getInstance($cousinParentFamily);
 				$tmp = array('M'=>'', 'F'=>'F', 'U'=>'NN');
