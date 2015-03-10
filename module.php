@@ -283,7 +283,7 @@ class VytuxCousinsTabModule extends webtrees\Module implements webtrees\ModuleTa
 				$cousinParentFamily = substr($primaryChildFamily, 0, strpos($primaryChildFamily, '@'));
 				if ( $cousinParentFamily == $myParentFamily )
 					continue; // cannot be cousin to self
-				$family = webtrees\Family::getInstance($cousinParentFamily);
+				$family = webtrees\Family::getInstance($cousinParentFamily, $WT_TREE);
 				$tmp = array('M'=>'', 'F'=>'F', 'U'=>'NN');
 				$isF = $tmp[$record->getSex()];
 				$label = '';
@@ -326,7 +326,7 @@ class VytuxCousinsTabModule extends webtrees\Module implements webtrees\ModuleTa
 					continue; // cannot be cousin to self
 				$record = webtrees\Individual::getInstance($id3, $WT_TREE);
 				$cousinParentFamily = substr($primaryChildFamily, 0, strpos($primaryChildFamily, '@'));
-				$family = webtrees\Family::getInstance($cousinParentFamily);
+				$family = webtrees\Family::getInstance($cousinParentFamily, $WT_TREE);
 				$tmp = array('M'=>'', 'F'=>'F', 'U'=>'NN');
 				$isF = $tmp[$record->getSex()];
 				$label = '';
