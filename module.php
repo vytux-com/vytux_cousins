@@ -32,7 +32,7 @@ use PDO;
 use Zend_Translate;
 use Fisharebest\Webtrees as webtrees;
 
-class VytuxCousinsModule extends webtrees\Module implements webtrees\ModuleTabInterface {
+class VytuxCousinsTabModule extends webtrees\Module implements webtrees\ModuleTabInterface {
 
 	public function __construct() {
 		parent::__construct('vytux_cousins');
@@ -78,12 +78,12 @@ class VytuxCousinsModule extends webtrees\Module implements webtrees\ModuleTabIn
 
 	// Extend class WT_Module
 	public function defaultAccessLevel() {
-		return WT_PRIV_USER;
+        return webtrees\Auth::PRIV_USER;
 	}
 	
 	// Implement WT_Module_Tab
 	public function getTabContent() {
-		global $controller;
+		global $controller, $WT_TREE;
 		global $TEXT_DIRECTION;
 		
 		$list_f          = array();
@@ -157,7 +157,7 @@ class VytuxCousinsModule extends webtrees\Module implements webtrees\ModuleTabIn
 		$sql_f .= "GROUP BY xref ";
 		$sql_f .= "ORDER BY -MIN(d_julianday1) DESC, n_givn ASC";
 				
-		$args_f['tree_id']   = WT_GED_ID;
+		$args_f['tree_id']   = $WT_TREE->getTreeId();
 		$args_f['family_id'] = substr($grandparentFamilyHusb, 0, strpos($grandparentFamilyHusb, '@'));
 		
 		$rows = webtrees\Database::prepare($sql_f)->execute($args_f)->fetchAll(PDO::FETCH_ASSOC);
@@ -174,7 +174,7 @@ class VytuxCousinsModule extends webtrees\Module implements webtrees\ModuleTabIn
 			$sql_f2 .= "AND (l_type LIKE 'HUSB' OR l_type LIKE 'WIFE') ";
 			$sql_f2 .= "AND l_to LIKE :family_id";
 			
-			$args_f2['tree_id']   = WT_GED_ID;
+			$args_f2['tree_id']   = $WT_TREE->getTreeId();
 			$args_f2['family_id'] = $ids;
 			
 			$rows = webtrees\Database::prepare($sql_f2)->execute($args_f2)->fetchAll(PDO::FETCH_ASSOC);
@@ -195,7 +195,7 @@ class VytuxCousinsModule extends webtrees\Module implements webtrees\ModuleTabIn
 			$sql_f3 .= "GROUP BY xref ";
 			$sql_f3 .= "ORDER BY -MIN(d_julianday1) DESC, n_givn ASC";
 					
-			$args_f3['tree_id']   = WT_GED_ID;
+			$args_f3['tree_id']   = $WT_TREE->getTreeId();
 			$args_f3['family_id'] = $id2;
 			
 			$rows  = webtrees\Database::prepare($sql_f3)->execute($args_f3)->fetchAll(PDO::FETCH_ASSOC);
@@ -216,7 +216,7 @@ class VytuxCousinsModule extends webtrees\Module implements webtrees\ModuleTabIn
 		$sql_m .= "GROUP BY xref ";
 		$sql_m .= "ORDER BY -MIN(d_julianday1) DESC, n_givn ASC";
 				
-		$args_m['tree_id']   = WT_GED_ID;
+		$args_m['tree_id']   = $WT_TREE->getTreeId();
 		$args_m['family_id'] = substr($grandparentFamilyWife, 0, strpos($grandparentFamilyWife, '@'));
 		
 		$rows = webtrees\Database::prepare($sql_m)->execute($args_m)->fetchAll(PDO::FETCH_ASSOC);
@@ -233,7 +233,7 @@ class VytuxCousinsModule extends webtrees\Module implements webtrees\ModuleTabIn
 			$sql_m2 .= "AND (l_type LIKE 'HUSB' OR l_type LIKE 'WIFE') ";
 			$sql_m2 .= "AND l_to LIKE :family_id";
 			
-			$args_m2['tree_id']   = WT_GED_ID;
+			$args_m2['tree_id']   = $WT_TREE->getTreeId();
 			$args_m2['family_id'] = $ids;
 			
 			$rows = webtrees\Database::prepare($sql_m2)->execute($args_m2)->fetchAll(PDO::FETCH_ASSOC);
@@ -254,7 +254,7 @@ class VytuxCousinsModule extends webtrees\Module implements webtrees\ModuleTabIn
 			$sql_m3 .= "GROUP BY xref ";
 			$sql_m3 .= "ORDER BY -MIN(d_julianday1) DESC, n_givn ASC";
 					
-			$args_m3['tree_id']   = WT_GED_ID;
+			$args_m3['tree_id']   = $WT_TREE->getTreeId();
 			$args_m3['family_id'] = $id2;
 			
 			$rows = webtrees\Database::prepare($sql_m3)->execute($args_m3)->fetchAll(PDO::FETCH_ASSOC);
@@ -373,4 +373,4 @@ class VytuxCousinsModule extends webtrees\Module implements webtrees\ModuleTabIn
 	}
 }
 
-return new VytuxCousinsModule;
+return new VytuxCousinsTabModule;
