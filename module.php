@@ -31,7 +31,7 @@ namespace Vytux\Webtrees_vytux_cousins;
 use PDO;
 use Fisharebest\Webtrees as webtrees;
 
-class VytuxCousinsTabModule extends webtrees\Module implements webtrees\ModuleTabInterface {
+class VytuxCousinsTabModule extends webtrees\AbstractModule implements webtrees\ModuleTabInterface {
 
 	public function __construct() {
 		parent::__construct('vytux_cousins');
