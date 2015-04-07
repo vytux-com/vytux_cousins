@@ -38,7 +38,7 @@ msgstr "Fars familie (%s)"
 msgid "Mother's family (%s)"
 msgstr "Mors familie (%s)"
 
-# Do not translate. Already in webtrees core
+# Do not translate. Already in webtrees core.
 #. Do not translate. Already in webtrees core.
 msgid "Parents"
 msgstr ""

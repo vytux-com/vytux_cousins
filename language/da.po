@@ -42,7 +42,7 @@ msgstr[1] "%2$s har %1$d registrerede fæter eller kusiner"
 msgid "Father's family (%s)"
 msgstr "Fars familie (%s)"
 
-# Do not translate. Already in webtrees core
+# Do not translate. Already in webtrees core.
 #. Do not translate. Already in webtrees core.
 #: module.php:203 module.php:242
 msgid "Parents"
