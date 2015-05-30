@@ -129,9 +129,9 @@ class VytuxCousinsTabModule extends webtrees\AbstractModule implements webtrees\
 		
 		//Lookup father's siblings
 		$sql_f  = "SELECT l_to as xref, MIN(d_julianday1) as date, n_givn as name ";
-		$sql_f .= "FROM `wt_link` ";
-		$sql_f .= "LEFT JOIN `wt_dates` ON l_to = d_gid AND d_file = l_file AND d_fact = 'BIRT' ";
-		$sql_f .= "LEFT JOIN `wt_name` ON l_to = n_id AND l_file = n_file AND n_type = 'NAME' ";
+		$sql_f .= "FROM `##link` ";
+		$sql_f .= "LEFT JOIN `##dates` ON l_to = d_gid AND d_file = l_file AND d_fact = 'BIRT' ";
+		$sql_f .= "LEFT JOIN `##name` ON l_to = n_id AND l_file = n_file AND n_type = 'NAME' ";
 		$sql_f .= "WHERE l_file = :tree_id ";
 		$sql_f .= "AND l_type LIKE 'CHIL' ";
 		$sql_f .= "AND l_from LIKE :family_id ";
@@ -167,9 +167,9 @@ class VytuxCousinsTabModule extends webtrees\AbstractModule implements webtrees\
 		//Lookup cousins (father's family)
 		foreach ($list_f2 as $id2) {
 			$sql_f3  = "SELECT l_to as xref, MIN(d_julianday1) as date, n_givn as name ";
-			$sql_f3 .= "FROM `wt_link` ";
-			$sql_f3 .= "LEFT JOIN `wt_dates` ON l_to = d_gid AND d_file = l_file AND d_fact = 'BIRT' ";
-			$sql_f3 .= "LEFT JOIN `wt_name` ON l_to = n_id AND l_file = n_file AND n_type = 'NAME' ";
+			$sql_f3 .= "FROM `##link` ";
+			$sql_f3 .= "LEFT JOIN `##dates` ON l_to = d_gid AND d_file = l_file AND d_fact = 'BIRT' ";
+			$sql_f3 .= "LEFT JOIN `##name` ON l_to = n_id AND l_file = n_file AND n_type = 'NAME' ";
 			$sql_f3 .= "WHERE l_file = :tree_id ";
 			$sql_f3 .= "AND l_type LIKE 'CHIL' ";
 			$sql_f3 .= "AND l_from LIKE :family_id ";
@@ -188,9 +188,9 @@ class VytuxCousinsTabModule extends webtrees\AbstractModule implements webtrees\
 
 		//Lookup mother's siblings
 		$sql_m  = "SELECT l_to as xref, MIN(d_julianday1) as date, n_givn as name ";
-		$sql_m .= "FROM `wt_link` ";
-		$sql_m .= "LEFT JOIN `wt_dates` ON l_to = d_gid AND d_file = l_file AND d_fact = 'BIRT' ";
-		$sql_m .= "LEFT JOIN `wt_name` ON l_to = n_id AND l_file = n_file AND n_type = 'NAME' ";
+		$sql_m .= "FROM `##link` ";
+		$sql_m .= "LEFT JOIN `##dates` ON l_to = d_gid AND d_file = l_file AND d_fact = 'BIRT' ";
+		$sql_m .= "LEFT JOIN `##name` ON l_to = n_id AND l_file = n_file AND n_type = 'NAME' ";
 		$sql_m .= "WHERE l_file = :tree_id ";
 		$sql_m .= "AND l_type LIKE 'CHIL' ";
 		$sql_m .= "AND l_from LIKE :family_id ";
@@ -226,9 +226,9 @@ class VytuxCousinsTabModule extends webtrees\AbstractModule implements webtrees\
 		//Lookup cousins (mother's family)
 		foreach ($list_m2 as $id2) {
 			$sql_m3  = "SELECT l_to as xref, MIN(d_julianday1) as date, n_givn as name ";
-			$sql_m3 .= "FROM `wt_link` ";
-			$sql_m3 .= "LEFT JOIN `wt_dates` ON l_to = d_gid AND d_file = l_file AND d_fact = 'BIRT' ";
-			$sql_m3 .= "LEFT JOIN `wt_name` ON l_to = n_id AND l_file = n_file AND n_type = 'NAME' ";
+			$sql_m3 .= "FROM `##link` ";
+			$sql_m3 .= "LEFT JOIN `##dates` ON l_to = d_gid AND d_file = l_file AND d_fact = 'BIRT' ";
+			$sql_m3 .= "LEFT JOIN `##name` ON l_to = n_id AND l_file = n_file AND n_type = 'NAME' ";
 			$sql_m3 .= "WHERE l_file = :tree_id ";
 			$sql_m3 .= "AND l_type LIKE 'CHIL' ";
 			$sql_m3 .= "AND l_from LIKE :family_id ";
