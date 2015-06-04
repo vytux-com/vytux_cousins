@@ -31,7 +31,7 @@ namespace Vytux\Webtrees_vytux_cousins;
 use PDO;
 use Fisharebest\Webtrees as webtrees;
 
-class VytuxCousinsTabModule extends webtrees\AbstractModule implements webtrees\ModuleTabInterface {
+class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements webtrees\Module\ModuleTabInterface {
 
 	public function __construct() {
 		parent::__construct('vytux_cousins');
@@ -318,7 +318,7 @@ class VytuxCousinsTabModule extends webtrees\AbstractModule implements webtrees\
 					}
 				}
 				if (isset($pedi) && $pedi != 'birth') {
-					$label = '<span class="cousins_pedi">' . webtrees\GedcomCodePedi::getValue($pedi, $record) . '</span>';
+					$label = '<span class="cousins_pedi">' . webtrees\GedcomCode\GedcomCodePedi::getValue($pedi, $record) . '</span>';
 				}
 				if ($cousinParentFamily != $prev_fam_id) {
 					$prev_fam_id = $cousinParentFamily;
