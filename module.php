@@ -97,6 +97,10 @@ class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements we
 				#vytux_cousins_content {border-spacing:10px;display:inline-table;margin:0 10px;overflow:hidden;padding:0;width:98%;}
 				#vytux_cousins .person_box, #vytux_cousins .person_boxF, #vytux_cousins .person_boxNN {clear:left;float:left;margin:1px 0;width:99%;!important;}
 				#cousins_f, #cousins_m {border:1px solid grey;border-radius:5px;display:table-cell;padding:10px;width:45%;}
+				/* Mobile low resolution viewport */
+				@media (max-width: 600px) {
+					#cousins_f, #cousins_m {border:1px solid grey;border-radius:5px;display:table-caption;padding:10px;width:90%;margin-bottom: 10px;}
+				}
 				.cousins_name {}
 				.cousins_lifespan, .cousins_pedi {font-size:9px;padding:3px 5px 5px 5px;}
 				.cousins_counter {margin:0 3px;font-size:80%;}
