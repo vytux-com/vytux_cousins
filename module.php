@@ -279,7 +279,7 @@ class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements we
 					}
 				}
 				if (isset($pedi) && $pedi != 'birth') {
-					$label = '<span class="cousins_pedi">' . webtrees\GedcomCodePedi::getValue($pedi, $record) . '</span>';
+					$label = '<span class="cousins_pedi">' . webtrees\GedcomCode\GedcomCodePedi::getValue($pedi, $record) . '</span>';
 				}
 				if ($cousinParentFamily != $prev_fam_id) {
 					$prev_fam_id = $cousinParentFamily;
