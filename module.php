@@ -139,7 +139,7 @@ class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements we
 		$sql_f .= "WHERE l_file = :tree_id ";
 		$sql_f .= "AND l_type LIKE 'CHIL' ";
 		$sql_f .= "AND l_from LIKE :family_id ";
-		$sql_f .= "GROUP BY xref ";
+		$sql_f .= "GROUP BY xref, name ";
 		$sql_f .= "ORDER BY -MIN(d_julianday1) DESC, n_givn ASC";
 				
 		$args_f['tree_id']   = $WT_TREE->getTreeId();
@@ -177,7 +177,7 @@ class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements we
 			$sql_f3 .= "WHERE l_file = :tree_id ";
 			$sql_f3 .= "AND l_type LIKE 'CHIL' ";
 			$sql_f3 .= "AND l_from LIKE :family_id ";
-			$sql_f3 .= "GROUP BY xref ";
+			$sql_f3 .= "GROUP BY xref, name ";
 			$sql_f3 .= "ORDER BY -MIN(d_julianday1) DESC, n_givn ASC";
 					
 			$args_f3['tree_id']   = $WT_TREE->getTreeId();
@@ -198,7 +198,7 @@ class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements we
 		$sql_m .= "WHERE l_file = :tree_id ";
 		$sql_m .= "AND l_type LIKE 'CHIL' ";
 		$sql_m .= "AND l_from LIKE :family_id ";
-		$sql_m .= "GROUP BY xref ";
+		$sql_m .= "GROUP BY xref, name ";
 		$sql_m .= "ORDER BY -MIN(d_julianday1) DESC, n_givn ASC";
 				
 		$args_m['tree_id']   = $WT_TREE->getTreeId();
@@ -236,7 +236,7 @@ class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements we
 			$sql_m3 .= "WHERE l_file = :tree_id ";
 			$sql_m3 .= "AND l_type LIKE 'CHIL' ";
 			$sql_m3 .= "AND l_from LIKE :family_id ";
-			$sql_m3 .= "GROUP BY xref ";
+			$sql_m3 .= "GROUP BY xref, name ";
 			$sql_m3 .= "ORDER BY -MIN(d_julianday1) DESC, n_givn ASC";
 					
 			$args_m3['tree_id']   = $WT_TREE->getTreeId();
