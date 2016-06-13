@@ -33,6 +33,9 @@ use Fisharebest\Webtrees as webtrees;
 
 class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements webtrees\Module\ModuleTabInterface {
 
+	const CUSTOM_VERSION = '1.7.5';
+    const CUSTOM_WEBSITE = 'https://vytux.com/main/projects/webtrees/vytux_cousins/';
+
 	public function __construct() {
 		parent::__construct('vytux_cousins');
 	}
