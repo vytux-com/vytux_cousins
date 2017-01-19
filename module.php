@@ -292,7 +292,11 @@ class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements we
 			}
 			$html .= '<div class="person_box' . $isF . '">';
 			$html .= '<span class="cousins_counter">' . $i . '</span>';
-			$html .= '<span class="cousins_name"><a target="_blank" href="' . $record->getHtmlUrl() . '">' . $record->getFullName() .'</a></span>';
+			if ($record->canShow()) {
+				$html .= '<span class="cousins_name"><a target="_blank" href="' . $record->getHtmlUrl() . '">' . $record->getFullName() .'</a></span>';
+			} else {
+				$html .= '<span class="cousins_name">'. $record->getFullName() .'</span>';
+			}
 			$html .= '<span class="cousins_lifespan" dir="' . $TEXT_DIRECTION . '">' . $record->getLifeSpan() . '</span>';
 			$html .= '<span class="cousins_pedi">' . $label . '</span>';
 			$html .= '</div>';
@@ -335,7 +339,11 @@ class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements we
 			}
 			$html .= '<div class="person_box' . $isF . '">';
 			$html .= '<span class="cousins_counter">' . $i . '</span>';
-			$html .= '<span class="cousins_name"><a target="_blank" href="' . $record->getHtmlUrl() . '">' . $record->getFullName() . '</a></span>';
+			if ($record->canShow()) {
+				$html .= '<span class="cousins_name"><a target="_blank" href="' . $record->getHtmlUrl() . '">' . $record->getFullName() .'</a></span>';
+			} else {
+				$html .= '<span class="cousins_name">'. $record->getFullName() .'</span>';
+			}
 			$html .= '<span class="cousins_lifespan" dir="' . $TEXT_DIRECTION . '">' . $record->getLifeSpan() . '</span>';
 			$html .= '<span class="cousins_pedi">' . $label . '</span>';
 			$html .= '</div>';
