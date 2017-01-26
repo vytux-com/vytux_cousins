@@ -135,7 +135,7 @@ class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements we
 		}
 		
 		//Lookup father's siblings
-		$sql_f  = "SELECT l_to as xref, MIN(d_julianday1) as date, any_value(n_givn) as name ";
+		$sql_f  = "SELECT l_to as xref, MIN(d_julianday1) as date, n_givn as name ";
 		$sql_f .= "FROM `##link` ";
 		$sql_f .= "LEFT JOIN `##dates` ON l_to = d_gid AND d_file = l_file AND d_fact = 'BIRT' ";
 		$sql_f .= "LEFT JOIN `##name` ON l_to = n_id AND l_file = n_file AND n_type = 'NAME' ";
@@ -143,7 +143,7 @@ class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements we
 		$sql_f .= "AND l_type LIKE 'CHIL' ";
 		$sql_f .= "AND l_from LIKE :family_id ";
 		$sql_f .= "GROUP BY xref, name ";
-		$sql_f .= "ORDER BY -MIN(d_julianday1) DESC, any_value(n_givn) ASC";
+		$sql_f .= "ORDER BY -MIN(d_julianday1) DESC, n_givn ASC";
 				
 		$args_f['tree_id']   = $WT_TREE->getTreeId();
 		$args_f['family_id'] = substr($grandparentFamilyHusb, 0, strpos($grandparentFamilyHusb, '@'));
@@ -173,7 +173,7 @@ class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements we
 		
 		//Lookup cousins (father's family)
 		foreach ($list_f2 as $id2) {
-			$sql_f3  = "SELECT l_to as xref, MIN(d_julianday1) as date, any_value(n_givn) as name ";
+			$sql_f3  = "SELECT l_to as xref, MIN(d_julianday1) as date, n_givn as name ";
 			$sql_f3 .= "FROM `##link` ";
 			$sql_f3 .= "LEFT JOIN `##dates` ON l_to = d_gid AND d_file = l_file AND d_fact = 'BIRT' ";
 			$sql_f3 .= "LEFT JOIN `##name` ON l_to = n_id AND l_file = n_file AND n_type = 'NAME' ";
@@ -181,7 +181,7 @@ class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements we
 			$sql_f3 .= "AND l_type LIKE 'CHIL' ";
 			$sql_f3 .= "AND l_from LIKE :family_id ";
 			$sql_f3 .= "GROUP BY xref, name ";
-			$sql_f3 .= "ORDER BY -MIN(d_julianday1) DESC, any_value(n_givn) ASC";
+			$sql_f3 .= "ORDER BY -MIN(d_julianday1) DESC, n_givn ASC";
 					
 			$args_f3['tree_id']   = $WT_TREE->getTreeId();
 			$args_f3['family_id'] = $id2;
@@ -194,7 +194,7 @@ class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements we
 		}
 
 		//Lookup mother's siblings
-		$sql_m  = "SELECT l_to as xref, MIN(d_julianday1) as date, any_value(n_givn) as name ";
+		$sql_m  = "SELECT l_to as xref, MIN(d_julianday1) as date, n_givn as name ";
 		$sql_m .= "FROM `##link` ";
 		$sql_m .= "LEFT JOIN `##dates` ON l_to = d_gid AND d_file = l_file AND d_fact = 'BIRT' ";
 		$sql_m .= "LEFT JOIN `##name` ON l_to = n_id AND l_file = n_file AND n_type = 'NAME' ";
@@ -202,7 +202,7 @@ class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements we
 		$sql_m .= "AND l_type LIKE 'CHIL' ";
 		$sql_m .= "AND l_from LIKE :family_id ";
 		$sql_m .= "GROUP BY xref, name ";
-		$sql_m .= "ORDER BY -MIN(d_julianday1) DESC, any_value(n_givn) ASC";
+		$sql_m .= "ORDER BY -MIN(d_julianday1) DESC, n_givn ASC";
 				
 		$args_m['tree_id']   = $WT_TREE->getTreeId();
 		$args_m['family_id'] = substr($grandparentFamilyWife, 0, strpos($grandparentFamilyWife, '@'));
@@ -232,7 +232,7 @@ class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements we
 		
 		//Lookup cousins (mother's family)
 		foreach ($list_m2 as $id2) {
-			$sql_m3  = "SELECT l_to as xref, MIN(d_julianday1) as date, any_value(n_givn) as name ";
+			$sql_m3  = "SELECT l_to as xref, MIN(d_julianday1) as date, n_givn as name ";
 			$sql_m3 .= "FROM `##link` ";
 			$sql_m3 .= "LEFT JOIN `##dates` ON l_to = d_gid AND d_file = l_file AND d_fact = 'BIRT' ";
 			$sql_m3 .= "LEFT JOIN `##name` ON l_to = n_id AND l_file = n_file AND n_type = 'NAME' ";
@@ -240,7 +240,7 @@ class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements we
 			$sql_m3 .= "AND l_type LIKE 'CHIL' ";
 			$sql_m3 .= "AND l_from LIKE :family_id ";
 			$sql_m3 .= "GROUP BY xref, name ";
-			$sql_m3 .= "ORDER BY -MIN(d_julianday1) DESC, any_value(n_givn) ASC";
+			$sql_m3 .= "ORDER BY -MIN(d_julianday1) DESC, n_givn ASC";
 					
 			$args_m3['tree_id']   = $WT_TREE->getTreeId();
 			$args_m3['family_id'] = $id2;
