@@ -151,7 +151,11 @@ class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements we
 		$rows = webtrees\Database::prepare($sql_f)->execute($args_f)->fetchAll(PDO::FETCH_ASSOC);
 		foreach ($rows as $row) {
 			if ($row['xref'] != substr($parentFamily->getHusband(), 0, strpos($parentFamily->getHusband(), '@')))
-				$list_f[] = $row['xref'];
+			{
+				if (!in_array($row['xref'], $list_f)) {
+    				$list_f[] = $row['xref'];
+				}
+			}
 		}
 		
 		//Lookup Aunt & Uncle's families (father's family)
@@ -167,7 +171,9 @@ class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements we
 			
 			$rows = webtrees\Database::prepare($sql_f2)->execute($args_f2)->fetchAll(PDO::FETCH_ASSOC);
 			foreach ($rows as $row) {
-				$list_f2[] = $row['xref'];
+				if (!in_array($row['xref'], $list_f2)) {
+    				$list_f2[] = $row['xref'];
+				}
 			}
 		}
 		
@@ -188,8 +194,10 @@ class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements we
 			
 			$rows  = webtrees\Database::prepare($sql_f3)->execute($args_f3)->fetchAll(PDO::FETCH_ASSOC);
 			foreach ($rows as $row) {
-				$list_f3[] = $row['xref'];
-				$count_cousins_f ++;
+				if (!in_array($row['xref'], $list_f3)) {
+    				$list_f3[] = $row['xref'];
+					$count_cousins_f ++;
+				}
 			}
 		}
 
@@ -210,7 +218,9 @@ class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements we
 		$rows = webtrees\Database::prepare($sql_m)->execute($args_m)->fetchAll(PDO::FETCH_ASSOC);
 		foreach ($rows as $row) {
 			if ($row['xref'] != substr($parentFamily->getWife(), 0, strpos($parentFamily->getWife(), '@')))
-				$list_m[] = $row['xref'];
+				if (!in_array($row['xref'], $list_m)) {
+    				$list_m[] = $row['xref'];
+				}
 		}
 		
 		//Lookup Aunt & Uncle's families (mother's family)
@@ -226,7 +236,9 @@ class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements we
 			
 			$rows = webtrees\Database::prepare($sql_m2)->execute($args_m2)->fetchAll(PDO::FETCH_ASSOC);
 			foreach ($rows as $row) {
-				$list_m2[] = $row['xref'];
+				if (!in_array($row['xref'], $list_m2)) {
+    				$list_m2[] = $row['xref'];
+				}
 			}
 		}
 		
@@ -247,8 +259,10 @@ class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements we
 			
 			$rows = webtrees\Database::prepare($sql_m3)->execute($args_m3)->fetchAll(PDO::FETCH_ASSOC);
 			foreach ($rows as $row) {
-				$list_m3[] = $row['xref'];
-				$count_cousins_m ++;
+				if (!in_array($row['xref'], $list_m3)) {
+    				$list_m3[] = $row['xref'];
+    				$count_cousins_m ++;
+				}			
 			}
 		}
 		
