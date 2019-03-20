@@ -257,17 +257,13 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      */
     public function boot(UserInterface $user, ?Tree $tree): void
     {
-        // The boot() function is called after the framework has been booted.
-        // We can now use the current user, tree, etc.
-        if (!Auth::isAdmin($user) && $tree !== null) {
-            return;
-        }
-
         // Here is also a good place to register any views (templates) used by the module.
         // This command allows the module to use: view($this->name() . '::', 'fish')
         // to access the file ./resources/views/fish.phtml
         View::registerNamespace($this->name(), __DIR__ . '/resources/views/');
     }
+
+    
 }
 
 return new VytuxCousinsTabModule;
