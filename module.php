@@ -151,6 +151,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
         $cousinsObj->self = $individual;
         $cousinsObj->fathersCousinCount = 0;
         $cousinsObj->mothersCousinCount = 0;
+        $cousinsObj->allCousinCount = 0;
         $cousinsObj->fatherCousins = [];
         $cousinsObj->motherCousins = [];
         if ($individual->primaryChildFamily()) {
@@ -181,6 +182,8 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
                     }
                 } 
             }
+
+            $cousinsObj->allCousinCount = sizeof(array_unique(array_merge($cousinsObj->fatherCousins,$cousinsObj->motherCousins)));
         }
 
         return $cousinsObj;
