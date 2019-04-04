@@ -194,7 +194,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return string
      */
-    public function resourceFolder(): string
+    public function resourcesFolder(): string
     {
         return __DIR__ . '/resources/';
     }
