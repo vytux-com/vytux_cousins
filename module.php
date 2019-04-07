@@ -42,6 +42,7 @@ use Fisharebest\Webtrees\Module\ModuleTabInterface;
 use Fisharebest\Webtrees\Module\ModuleTabTrait;
 use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\View;
+use Fisharebest\Localization\Translation;
 
 /**
  * vytux_cousins module
@@ -230,10 +231,10 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     public function getTabContent(Individual $individual): string
     {
         return view($this->name() . '::tab', [
-            'cousins_obj'	=> $this->getCousins($individual),
-            'cousins_css'	=> $this->css(),
+            'cousins_obj'   => $this->getCousins($individual),
+            'cousins_css'   => $this->css(),
             'module_obj'    => $this,
-        ]);	
+        ]); 
     }
 
     /** {@inheritdoc} */
@@ -266,7 +267,215 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
         View::registerNamespace($this->name(), __DIR__ . '/resources/views/');
     }
 
-    
-}
+    /**
+     * Additional/updated translations.
+     *
+     * @param string $language
+     *
+     * @return string[]
+     */
+    public function customTranslations(string $language): array
+    {
+        // Here we are using an array for translations.
+        // If you had .MO files, you could use them with:
+        // return (new Translation('path/to/file.mo'))->asArray();
+        switch ($language) {
+            case 'da':
+                return $this->danishTranslations();
+            case 'fi':
+                return $this->finnishTranslations();
+            case 'fr':
+            case 'fr-CA':
+                return $this->frenchTranslations();
+            case 'he':
+                return $this->hebrewTranslations();
+            case 'lt':
+                return $this->lithuanianTranslations();
+            case 'nb':
+                return $this->norwegianBokmålTranslations();
+            case 'nl':
+                return $this->dutchTranslations();
+            case 'nn':
+                return $this->norwegianNynorskTranslations();
+            case 'sv':
+                return $this->swedishTranslations();               
+            default:
+                return [];
+        }
+    }
+
+    /**
+     * @return array
+     */
+    protected function lithuanianTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => 'Pusbroliai / Pusseserės',
+            'A tab showing cousins of an individual.' => 'Lapas rodantis asmens pusbrolius ir pusseseres.',
+            'No family available' => 'Šeima nerasta',
+            'Father\'s family (%s)' => 'Tėvo šeima (%s)',
+            'Mother\'s family (%s)' => 'Motinos šeima (%s)',
+            '%2$s has %1$d first cousin recorded' . 
+                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
+                => '%2$s turi %1$d įrašyta pirmos eilės pusbrolį/pusseserę'  . 
+                I18N::PLURAL . '%2$s turi %1$d įrašytus pirmos eilės pusbrolius/pusseseres'  . 
+                I18N::PLURAL . '%2$s turi %1$d įrašytų pirmos eilės pusbrolių/pusseserių',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function danishTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => 'Fætre og kusiner',
+            'A tab showing cousins of an individual.' => 'En fane der viser en persons fætre og kusiner.',
+            'No family available' => 'Ingen familie tilgængelig',
+            'Father\'s family (%s)' => 'Fars familie (%s)',
+            'Mother\'s family (%s)' => 'Mors familie (%s)',
+            '%2$s has %1$d first cousin recorded' .
+                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
+                => '%2$s har %1$d registreret fæter eller kusin'  . 
+                I18N::PLURAL . '%2$s har %1$d registrerede fæter eller kusiner',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function frenchTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => 'Cousins',
+            'A tab showing cousins of an individual.' => 'Onglet montrant les cousins d\'un individu.',
+            'No family available' => 'Pas de famille disponible',
+            'Father\'s family (%s)' => 'Famille paternelle (%s)',
+            'Mother\'s family (%s)' => 'Famille maternelle (%s)',
+            '%2$s has %1$d first cousin recorded' .
+                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
+                => '%2$s a %1$d cousin germain connu'  . 
+                I18N::PLURAL . '%2$s a %1$d cousins germains connus',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function finnishTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => 'Serkut',
+            'A tab showing cousins of an individual.' => 'Välilehti joka näyttää henkilön serkut.',
+            'No family available' => 'Perhe puuttuu',
+            'Father\'s family (%s)' => 'Isän perhe (%s)',
+            'Mother\'s family (%s)' => 'Äidin perhe (%s)',
+            '%2$s has %1$d first cousin recorded' .
+                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
+                => '%2$s:llä on %1$d serkku sivustolla'  . 
+                I18N::PLURAL . '%2$s:lla on %1$d serkkua sivustolla',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function hebrewTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => 'בני דודים',
+            'A tab showing cousins of an individual.' => 'חוצץ המראה בני דוד של אדם.',
+            'No family available' => 'משפחה חסרה',
+            'Father\'s family (%s)' => 'משפחת האב (%s)',
+            'Mother\'s family (%s)' => 'משפחת האם (%s)',
+            '%2$s has %1$d first cousin recorded' .
+                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
+                => 'ל%2$s יש בן דוד אחד מדרגה ראשונה'  . 
+                I18N::PLURAL . 'ל%2$s יש %1$d בני דודים מדרגה ראשונה',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function norwegianBokmålTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => 'Søskenbarn',
+            'A tab showing cousins of an individual.' => 'Fane som viser en persons søskenbarn.',
+            'No family available' => 'Ingen familie tilgjengelig',
+            'Father\'s family (%s)' => 'Fars familie (%s)',
+            'Mother\'s family (%s)' => 'Mors familie (%s)',
+            '%2$s has %1$d first cousin recorded' .
+                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
+                => '%2$s har %1$d registrert søskenbarn'  . 
+                I18N::PLURAL . '%2$s har %1$d registrerte søskenbarn',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function norwegianNynorskTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => 'Syskenbarn',
+            'A tab showing cousins of an individual.' => 'Fane som syner ein person sine syskenbarn.',
+            'No family available' => 'Ingen familie tilgjengeleg',
+            'Father\'s family (%s)' => 'Fars familie (%s)',
+            'Mother\'s family (%s)' => 'Mors familie (%s)',
+            '%2$s has %1$d first cousin recorded' .
+                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
+                => '%2$s har %1$d registrert syskenbarn'  . 
+                I18N::PLURAL . '%2$s har %1$d registrerte syskenbarn',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function dutchTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => 'Neven en Nichten',
+            'A tab showing cousins of an individual.' => 'Tab laat neven en nichten van deze persoon zien.',
+            'No family available' => 'Geen familie gevonden',
+            'Father\'s family (%s)' => 'Vader\'s familie (%s)',
+            'Mother\'s family (%s)' => 'Moeder\'s familie (%s)',
+            '%2$s has %1$d first cousin recorded' .
+                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
+                => '%2$s heeft %1$d neef of nicht in de eerste lijn'  . 
+                I18N::PLURAL . '%2$s heeft %1$d neven en nichten in de eerste lijn',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function swedishTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => 'Kusiner',
+            'A tab showing cousins of an individual.' => 'En flik som visar en persons kusiner.',
+            'No family available' => 'Familj saknas',
+            'Father\'s family (%s)' => 'Faderns familj (%s)',
+            'Mother\'s family (%s)' => 'Moderns familj (%s)',
+            '%2$s has %1$d first cousin recorded' .
+                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
+                => '%2$s har %1$d registrerad kusin'  . 
+                I18N::PLURAL . '%2$s har %1$d registrerade kusiner',
+        ];
+    }
+
+};
 
 return new VytuxCousinsTabModule;
