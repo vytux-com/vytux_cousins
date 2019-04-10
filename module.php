@@ -1,6 +1,5 @@
 <?php
-namespace Vytux\Webtrees_vytux_cousins;
-
+namespace Vytux\WebtreesModules\VytuxCousins;
 /*
  * webtrees - vytux_cousins tab based on simpl_cousins
  *
@@ -28,359 +27,455 @@ namespace Vytux\Webtrees_vytux_cousins;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-use PDO;
-use Fisharebest\Webtrees as webtrees;
+use Fisharebest\Webtrees\Fact;
+use Fisharebest\Webtrees\Gedcom;
+use Fisharebest\Webtrees\I18N;
+use Fisharebest\Webtrees\Individual;
+use Fisharebest\Webtrees\Family;
+use Fisharebest\Webtrees\Auth;
+use Fisharebest\Webtrees\GedcomCode\GedcomCodePedi;
+use Fisharebest\Webtrees\Contracts\UserInterface;
+use Fisharebest\Webtrees\Module\AbstractModule;
+use Fisharebest\Webtrees\Module\ModuleCustomInterface;
+use Fisharebest\Webtrees\Module\ModuleCustomTrait;
+use Fisharebest\Webtrees\Module\ModuleTabInterface;
+use Fisharebest\Webtrees\Module\ModuleTabTrait;
+use Fisharebest\Webtrees\Tree;
+use Fisharebest\Webtrees\View;
+use Fisharebest\Localization\Translation;
 
-class VytuxCousinsTabModule extends webtrees\Module\AbstractModule implements webtrees\Module\ModuleTabInterface {
+/**
+ * vytux_cousins module
+ */
+class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface, ModuleCustomInterface {
+    use ModuleCustomTrait;
+    use ModuleTabTrait;
 
-	const CUSTOM_VERSION = '1.7.9-1';
-    const CUSTOM_WEBSITE = 'https://vytux.com/main/projects/webtrees/vytux_cousins/';
+    /**
+     * How should this module be identified in the control panel, etc.?
+     *
+     * @return string
+     */
+    public function title(): string
+    {
+        return /* I18N: Name of a module/tab on the individual page. */ I18N::translate('Cousins');
+    }
 
-	public function __construct() {
-		parent::__construct('vytux_cousins');
-	}
-	
-	// Extend WT_Module
-	public function getTitle() {
-		return /* I18N: Name of a module/tab on the individual page. */ webtrees\I18N::translate('Cousins');
-	}
+    /**
+     * A sentence describing what this module does.
+     *
+     * @return string
+     */
+    public function description(): string
+    {
+        return /* I18N: Description of the "Facts and events" module */ I18N::translate('A tab showing cousins of an individual.');
+    }
 
-	// Extend WT_Module
-	public function getDescription() {
-		return /* I18N: Description of the "Facts and events" module */ webtrees\I18N::translate('A tab showing cousins of an individual.');
-	}
+    /**
+     * The person or organisation who created this module.
+     *
+     * @return string
+     */
+    public function customModuleAuthorName(): string
+    {
+        return 'Vytautas Krivickas';
+    }
 
-	// Implement WT_Module_Tab
-	public function defaultTabOrder() {
-		return 10;
-	}
+    /**
+     * The version of this module.
+     *
+     * @return string
+     */
+    public function customModuleVersion(): string
+    {
+        return '2.0.0';
+    }
 
-	// Implement WT_Module_Tab
-	public function isGrayedOut() {
-		return false;
-	}
+    /**
+     * A URL that will provide the latest version of this module.
+     *
+     * @return string
+     */
+    public function customModuleLatestVersionUrl(): string
+    {
+        return 'https://vytux.com/main/projects/webtrees/vytux_cousins/';
+    }
 
-	// Extend class WT_Module
-	public function defaultAccessLevel() {
-        return webtrees\Auth::PRIV_USER;
-	}
-	
-	// Implement WT_Module_Tab
-	public function getTabContent() {
-		global $controller, $WT_TREE;
-		global $TEXT_DIRECTION;
-		
-		$list_f          = array();
-		$list_f2         = array();
-		$list_f3         = array();
-		$list_m          = array();
-		$list_m2         = array();
-		$list_m3         = array();
-		$sql_f           = '';
-		$sql_f2          = '';
-		$sql_f3          = '';
-		$sql_m           = '';
-		$sql_m2          = '';
-		$sql_m3          = '';
-		$args_f          = array();
-		$args_f2         = array();
-		$args_f3         = array();
-		$args_m          = array();
-		$args_m2         = array();
-		$args_m3         = array();
-		$count_cousins_f = 0;
-		$count_cousins_m = 0;
-		$family          = '';
-		
-		$html = '<style type="text/css">
-				#vytux_cousins {width:98%;}
-				#vytux_cousins h3 {margin:10px 20px;}
-				#vytux_cousins h4 {font-size:16px;font-weight:900;margin:0 0 5px;text-align:center;}
-				#vytux_cousins h5 {margin:0;clear:both;padding:10px 0 2px 0;}
-				#vytux_cousins_content {border-spacing:10px;display:inline-table;margin:0 10px;overflow:hidden;padding:0;width:98%;}
-				#vytux_cousins .person_box, #vytux_cousins .person_boxF, #vytux_cousins .person_boxNN {clear:left;float:left;margin:1px 0;width:99%;!important;}
-				#cousins_f, #cousins_m {border:1px solid grey;border-radius:5px;display:table-cell;padding:10px;width:45%;}
-				/* Mobile low resolution viewport */
-				@media (max-width: 600px) {
-					#cousins_f, #cousins_m {border:1px solid grey;border-radius:5px;display:table-caption;padding:10px;width:90%;margin-bottom: 10px;}
-				}
-				.cousins_name {}
-				.cousins_lifespan, .cousins_pedi {font-size:9px;padding:3px 5px 5px 5px;}
-				.cousins_counter {margin:0 3px;font-size:80%;}
-				.cousins_counter:after {content:". ";}
-				</style>';
+    /**
+     * Where to get support for this module.  Perhaps a github respository?
+     *
+     * @return string
+     */
+    public function customModuleSupportUrl(): string
+    {
+        return 'https://vytux.com/main/contact-us/';
+    }
 
-		$person   = $controller->getSignificantIndividual();
-		$fullname = $controller->record->getFullName();
-		$xref     = $controller->record->getXref();
-		
-		if ($person->getPrimaryChildFamily()) {
-			$parentFamily = $person->getPrimaryChildFamily();
-		} else {
-			$html .= '<h3>'.webtrees\I18N::translate('No family available').'</h3>';
-			return $html;
-			exit;
-		}
-		
-		if ($parentFamily->getHusband()) {
-			$grandparentFamilyHusb = $parentFamily->getHusband()->getPrimaryChildFamily();
-		} else {
-			$grandparentFamilyHusb = '';
-		}
-		
-		if ($parentFamily->getWife()) {
-			$grandparentFamilyWife = $parentFamily->getWife()->getPrimaryChildFamily();
-		} else {
-			$grandparentFamilyWife = '';
-		}
-		
-		//Lookup father's siblings
-		$sql_f  = "SELECT l_to as xref, MIN(d_julianday1) as date, n_givn as name ";
-		$sql_f .= "FROM `##link` ";
-		$sql_f .= "LEFT JOIN `##dates` ON l_to = d_gid AND d_file = l_file AND d_fact = 'BIRT' ";
-		$sql_f .= "LEFT JOIN `##name` ON l_to = n_id AND l_file = n_file AND n_type = 'NAME' ";
-		$sql_f .= "WHERE l_file = :tree_id ";
-		$sql_f .= "AND l_type LIKE 'CHIL' ";
-		$sql_f .= "AND l_from LIKE :family_id ";
-		$sql_f .= "GROUP BY xref, name ";
-		$sql_f .= "ORDER BY -MIN(d_julianday1) DESC, n_givn ASC";
-				
-		$args_f['tree_id']   = $WT_TREE->getTreeId();
-		$args_f['family_id'] = substr($grandparentFamilyHusb, 0, strpos($grandparentFamilyHusb, '@'));
-		
-		$rows = webtrees\Database::prepare($sql_f)->execute($args_f)->fetchAll(PDO::FETCH_ASSOC);
-		foreach ($rows as $row) {
-			if ($row['xref'] != substr($parentFamily->getHusband(), 0, strpos($parentFamily->getHusband(), '@')))
-			{
-				if (!in_array($row['xref'], $list_f)) {
-    				$list_f[] = $row['xref'];
-				}
-			}
-		}
-		
-		//Lookup Aunt & Uncle's families (father's family)
-		foreach ($list_f as $ids) {
-			$sql_f2  = "SELECT l_from as xref ";
-			$sql_f2 .= "FROM `##link` ";
-			$sql_f2 .= "WHERE l_file = :tree_id ";
-			$sql_f2 .= "AND (l_type LIKE 'HUSB' OR l_type LIKE 'WIFE') ";
-			$sql_f2 .= "AND l_to LIKE :family_id";
-			
-			$args_f2['tree_id']   = $WT_TREE->getTreeId();
-			$args_f2['family_id'] = $ids;
-			
-			$rows = webtrees\Database::prepare($sql_f2)->execute($args_f2)->fetchAll(PDO::FETCH_ASSOC);
-			foreach ($rows as $row) {
-				if (!in_array($row['xref'], $list_f2)) {
-    				$list_f2[] = $row['xref'];
-				}
-			}
-		}
-		
-		//Lookup cousins (father's family)
-		foreach ($list_f2 as $id2) {
-			$sql_f3  = "SELECT l_to as xref, MIN(d_julianday1) as date, n_givn as name ";
-			$sql_f3 .= "FROM `##link` ";
-			$sql_f3 .= "LEFT JOIN `##dates` ON l_to = d_gid AND d_file = l_file AND d_fact = 'BIRT' ";
-			$sql_f3 .= "LEFT JOIN `##name` ON l_to = n_id AND l_file = n_file AND n_type = 'NAME' ";
-			$sql_f3 .= "WHERE l_file = :tree_id ";
-			$sql_f3 .= "AND l_type LIKE 'CHIL' ";
-			$sql_f3 .= "AND l_from LIKE :family_id ";
-			$sql_f3 .= "GROUP BY xref, name ";
-			$sql_f3 .= "ORDER BY -MIN(d_julianday1) DESC, n_givn ASC";
-					
-			$args_f3['tree_id']   = $WT_TREE->getTreeId();
-			$args_f3['family_id'] = $id2;
-			
-			$rows  = webtrees\Database::prepare($sql_f3)->execute($args_f3)->fetchAll(PDO::FETCH_ASSOC);
-			foreach ($rows as $row) {
-				if (!in_array($row['xref'], $list_f3)) {
-    				$list_f3[] = $row['xref'];
-					$count_cousins_f ++;
-				}
-			}
-		}
+    /**
+     * The default position for this tab.  It can be changed in the control panel.
+     *
+     * @return int
+     */
+    public function defaultTabOrder(): int
+    {
+        return 10;
+    }
 
-		//Lookup mother's siblings
-		$sql_m  = "SELECT l_to as xref, MIN(d_julianday1) as date, n_givn as name ";
-		$sql_m .= "FROM `##link` ";
-		$sql_m .= "LEFT JOIN `##dates` ON l_to = d_gid AND d_file = l_file AND d_fact = 'BIRT' ";
-		$sql_m .= "LEFT JOIN `##name` ON l_to = n_id AND l_file = n_file AND n_type = 'NAME' ";
-		$sql_m .= "WHERE l_file = :tree_id ";
-		$sql_m .= "AND l_type LIKE 'CHIL' ";
-		$sql_m .= "AND l_from LIKE :family_id ";
-		$sql_m .= "GROUP BY xref, name ";
-		$sql_m .= "ORDER BY -MIN(d_julianday1) DESC, n_givn ASC";
-				
-		$args_m['tree_id']   = $WT_TREE->getTreeId();
-		$args_m['family_id'] = substr($grandparentFamilyWife, 0, strpos($grandparentFamilyWife, '@'));
-		
-		$rows = webtrees\Database::prepare($sql_m)->execute($args_m)->fetchAll(PDO::FETCH_ASSOC);
-		foreach ($rows as $row) {
-			if ($row['xref'] != substr($parentFamily->getWife(), 0, strpos($parentFamily->getWife(), '@')))
-				if (!in_array($row['xref'], $list_m)) {
-    				$list_m[] = $row['xref'];
-				}
-		}
-		
-		//Lookup Aunt & Uncle's families (mother's family)
-		foreach ($list_m as $ids) {
-			$sql_m2  = "SELECT l_from as xref ";
-			$sql_m2 .= "FROM `##link` ";
-			$sql_m2 .= "WHERE l_file = :tree_id ";
-			$sql_m2 .= "AND (l_type LIKE 'HUSB' OR l_type LIKE 'WIFE') ";
-			$sql_m2 .= "AND l_to LIKE :family_id";
-			
-			$args_m2['tree_id']   = $WT_TREE->getTreeId();
-			$args_m2['family_id'] = $ids;
-			
-			$rows = webtrees\Database::prepare($sql_m2)->execute($args_m2)->fetchAll(PDO::FETCH_ASSOC);
-			foreach ($rows as $row) {
-				if (!in_array($row['xref'], $list_m2)) {
-    				$list_m2[] = $row['xref'];
-				}
-			}
-		}
-		
-		//Lookup cousins (mother's family)
-		foreach ($list_m2 as $id2) {
-			$sql_m3  = "SELECT l_to as xref, MIN(d_julianday1) as date, n_givn as name ";
-			$sql_m3 .= "FROM `##link` ";
-			$sql_m3 .= "LEFT JOIN `##dates` ON l_to = d_gid AND d_file = l_file AND d_fact = 'BIRT' ";
-			$sql_m3 .= "LEFT JOIN `##name` ON l_to = n_id AND l_file = n_file AND n_type = 'NAME' ";
-			$sql_m3 .= "WHERE l_file = :tree_id ";
-			$sql_m3 .= "AND l_type LIKE 'CHIL' ";
-			$sql_m3 .= "AND l_from LIKE :family_id ";
-			$sql_m3 .= "GROUP BY xref, name ";
-			$sql_m3 .= "ORDER BY -MIN(d_julianday1) DESC, n_givn ASC";
-					
-			$args_m3['tree_id']   = $WT_TREE->getTreeId();
-			$args_m3['family_id'] = $id2;
-			
-			$rows = webtrees\Database::prepare($sql_m3)->execute($args_m3)->fetchAll(PDO::FETCH_ASSOC);
-			foreach ($rows as $row) {
-				if (!in_array($row['xref'], $list_m3)) {
-    				$list_m3[] = $row['xref'];
-    				$count_cousins_m ++;
-				}			
-			}
-		}
-		
-		$count_cousins  = $count_cousins_f + $count_cousins_m;
-		$myParentFamily = $parentFamily->getXref();
-		
-		$html .= '<h3>' . webtrees\I18N::plural('%2$s has %1$d first cousin recorded', '%2$s has %1$d first cousins recorded', $count_cousins, $count_cousins, $fullname) . '</h3>';
-		$html .= '<div id="vytux_cousins_content">';
+    /**
+     * Is this tab empty? If so, we don't always need to display it.
+     *
+     * @param Individual $individual
+     *
+     * @return bool
+     */
+    public function hasTabContent(Individual $individual): bool
+    {
+        return true;
+    }
 
-		//List Cousins (father's family)
-		$html .= '<div id="cousins_f">';
-		$html .= '<h4>' . webtrees\I18N::translate('Father\'s family (%s)', $count_cousins_f) . '</h4>';
-		$i = 0;
-		$prev_fam_id = -1;
-		foreach ($list_f3 as $id3) {
-			$i++;
-			$record = webtrees\Individual::getInstance($id3, $WT_TREE);
-			if ($record->getPrimaryChildFamily()) {
-				$primaryChildFamily = $record->getPrimaryChildFamily();
-				$cousinParentFamily = substr($primaryChildFamily, 0, strpos($primaryChildFamily, '@'));
-				if ( $cousinParentFamily == $myParentFamily )
-					continue; // cannot be cousin to self
-				$family = webtrees\Family::getInstance($cousinParentFamily, $WT_TREE);
-				$tmp = array('M'=>'', 'F'=>'F', 'U'=>'NN');
-				$isF = $tmp[$record->getSex()];
-				$label = '';
-				foreach ($record->getFacts('FAMC') as $fact) {
-					if ($fact->getTarget() === $record->getPrimaryChildFamily()) {
-						$pedi = $fact->getAttribute('PEDI');
-						break;
-					}
-				}
-				if (isset($pedi) && $pedi != 'birth') {
-					$label = '<span class="cousins_pedi">' . webtrees\GedcomCode\GedcomCodePedi::getValue($pedi, $record) . '</span>';
-				}
-				if ($cousinParentFamily != $prev_fam_id) {
-					$prev_fam_id = $cousinParentFamily;
-					$html .= '<h5>' . /* I18N: Do not translate. Already in webtrees core */ webtrees\I18N::translate('Parents') . '<a target="_blank" href="' . $family->getHtmlUrl() . '">&nbsp;' . $family->getFullName() . '</a></h5>';
-					$i = 1;	
-				}
-			}
-			$html .= '<div class="person_box' . $isF . '">';
-			$html .= '<span class="cousins_counter">' . $i . '</span>';
-			if ($record->canShow()) {
-				$html .= '<span class="cousins_name"><a target="_blank" href="' . $record->getHtmlUrl() . '">' . $record->getFullName() .'</a></span>';
-			} else {
-				$html .= '<span class="cousins_name">'. $record->getFullName() .'</span>';
-			}
-			$html .= '<span class="cousins_lifespan" dir="' . $TEXT_DIRECTION . '">' . $record->getLifeSpan() . '</span>';
-			$html .= '<span class="cousins_pedi">' . $label . '</span>';
-			$html .= '</div>';
-		}
-		$html .= '</div>'; // close id="cousins_f"
-		
-		//List Cousins (mother's family)
-		$prev_fam_id = -1;
-		$html .= '<div id="cousins_m">';
-		$html .= '<h4>' . webtrees\I18N::translate('Mother\'s family (%s)', $count_cousins_m) . '</h4>';
-		$i = 0;
-		foreach ($list_m3 as $id3) {
-			$i++;
-			$record = webtrees\Individual::getInstance($id3, $WT_TREE);
-			if ($record->getPrimaryChildFamily()) {
-				$primaryChildFamily = $record->getPrimaryChildFamily();
-				$cousinParentFamily = substr($primaryChildFamily, 0, strpos($primaryChildFamily, '@'));
-				if ( $cousinParentFamily == $myParentFamily )
-					continue; // cannot be cousin to self
-				$record = webtrees\Individual::getInstance($id3, $WT_TREE);
-				$cousinParentFamily = substr($primaryChildFamily, 0, strpos($primaryChildFamily, '@'));
-				$family = webtrees\Family::getInstance($cousinParentFamily, $WT_TREE);
-				$tmp = array('M'=>'', 'F'=>'F', 'U'=>'NN');
-				$isF = $tmp[$record->getSex()];
-				$label = '';
-				foreach ($record->getFacts('FAMC') as $fact) {
-					if ($fact->getTarget() === $record->getPrimaryChildFamily()) {
-						$pedi = $fact->getAttribute('PEDI');
-						break;
-					}
-				}
-				if (isset($pedi) && $pedi != 'birth') {
-					$label = '<span class="cousins_pedi">' . webtrees\GedcomCode\GedcomCodePedi::getValue($pedi, $record) . '</span>';
-				}
-				if ($cousinParentFamily != $prev_fam_id) {
-					$prev_fam_id = $cousinParentFamily;
-					$html .= '<h5>' . /* I18N: Do not translate. Already in webtrees core */ webtrees\I18N::translate('Parents') . '<a target="_blank" href="' . $family->getHtmlUrl() . '">&nbsp;' . $family->getFullName() . '</a></h5>';
-					$i = 1;
-				}
-			}
-			$html .= '<div class="person_box' . $isF . '">';
-			$html .= '<span class="cousins_counter">' . $i . '</span>';
-			if ($record->canShow()) {
-				$html .= '<span class="cousins_name"><a target="_blank" href="' . $record->getHtmlUrl() . '">' . $record->getFullName() .'</a></span>';
-			} else {
-				$html .= '<span class="cousins_name">'. $record->getFullName() .'</span>';
-			}
-			$html .= '<span class="cousins_lifespan" dir="' . $TEXT_DIRECTION . '">' . $record->getLifeSpan() . '</span>';
-			$html .= '<span class="cousins_pedi">' . $label . '</span>';
-			$html .= '</div>';
-		}
-		$html .= '</div>'; // close id="cousins_m"
-		$html .= '</div>'; // close div id="vytux_cousins_content"
-		return $html;
-	}
+    /**
+     * A greyed out tab has no actual content, but may perhaps have
+     * options to create content.
+     *
+     * @param Individual $individual
+     *
+     * @return bool
+     */
+    public function isGrayedOut(Individual $individual): bool
+    {
+        return false;
+    }
 
-	// Implement WT_Module_Tab
-	public function hasTabContent() {
-		return true;
-	}
-	
-	// Implement WT_Module_Tab
-	public function canLoadAjax() {
-		return false;
-	}
+    private function getCousins(Individual $individual): object
+    {
+        $cousinsObj = (object)[];
+        $cousinsObj->self = $individual;
+        $cousinsObj->fathersCousinCount = 0;
+        $cousinsObj->mothersCousinCount = 0;
+        $cousinsObj->allCousinCount = 0;
+        $cousinsObj->fatherCousins = [];
+        $cousinsObj->motherCousins = [];
+        if ($individual->primaryChildFamily()) {
+            $cousinsObj->father = $individual->primaryChildFamily()->husband();
+            if (($cousinsObj->father) && ($cousinsObj->father->primaryChildFamily())) {
+                foreach ($cousinsObj->father->primaryChildFamily()->children() as $sibling) {
+                    if ($sibling !== $cousinsObj->father) {
+                        foreach ($sibling->spouseFamilies() as $fam) {
+                            foreach ($fam->children() as $child) {
+                                $cousinsObj->fatherCousins[] = $child;
+                                $cousinsObj->fathersCousinCount++;
+                            }
+                        }
+                    }
+                } 
+            }
 
-	// Implement WT_Module_Tab
-	public function getPreLoadContent() {
-		return '';
-	}
-}
+            $cousinsObj->mother = $individual->primaryChildFamily()->wife();
+            if (($cousinsObj->mother) && ($cousinsObj->mother->primaryChildFamily())) {
+                foreach ($cousinsObj->mother->primaryChildFamily()->children() as $sibling) {
+                    if ($sibling !== $cousinsObj->mother) {
+                        foreach ($sibling->spouseFamilies() as $fam) {
+                            foreach ($fam->children() as $child) {
+                                $cousinsObj->motherCousins[] = $child;
+                                $cousinsObj->mothersCousinCount++;
+                            }
+                        }
+                    }
+                } 
+            }
+
+            $cousinsObj->allCousinCount = sizeof(array_unique(array_merge($cousinsObj->fatherCousins,$cousinsObj->motherCousins)));
+        }
+
+        return $cousinsObj;
+    }
+
+    /**
+     * Where does this module store its resources
+     *
+     * @return string
+     */
+    public function resourcesFolder(): string
+    {
+        return __DIR__ . '/resources/';
+    }
+
+    /**
+     * A label for a parental family group
+     *
+     * @param Family $family
+     *
+     * @return string
+     */
+    public function getChildLabel(Individual $individual): string
+    {
+        if (preg_match('/\n1 FAMC @' . $individual->primaryChildFamily()->xref() . '@(?:\n[2-9].*)*\n2 PEDI (.+)/', $individual->gedcom(), $match)) {
+            // A specified pedigree
+            return GedcomCodePedi::getValue($match[1],$individual->getInstance($individual->xref(),$individual->tree()));
+        }
+
+        // Default (birth) pedigree
+        return GedcomCodePedi::getValue('',$individual->getInstance($individual->xref(),$individual->tree()));
+    }
+
+
+    /**
+     * @return string
+     */
+    public function css(): string
+    {
+        return $this->assetUrl('css/vytux_cousins.css');
+    }
+
+    /** {@inheritdoc} */
+    public function getTabContent(Individual $individual): string
+    {
+        return view($this->name() . '::tab', [
+            'cousins_obj'   => $this->getCousins($individual),
+            'cousins_css'   => $this->css(),
+            'module_obj'    => $this,
+        ]); 
+    }
+
+    /** {@inheritdoc} */
+    public function canLoadAjax(): bool
+    {
+        return false;
+    }
+
+    /**
+     *  Constructor.
+     */
+    public function __construct()
+    {
+        // IMPORTANT - the constructor is called on *all* modules, even ones that are disabled.
+        // It is also called before the webtrees framework is initialised, and so other components
+        // will not yet exist.
+    }
+
+    /**
+     *  Boostrap.
+     *
+     * @param UserInterface $user A user (or visitor) object.
+     * @param Tree|null     $tree Note that $tree can be null (if all trees are private).
+     */
+    public function boot(UserInterface $user, ?Tree $tree): void
+    {
+        // Here is also a good place to register any views (templates) used by the module.
+        // This command allows the module to use: view($this->name() . '::', 'fish')
+        // to access the file ./resources/views/fish.phtml
+        View::registerNamespace($this->name(), __DIR__ . '/resources/views/');
+    }
+
+    /**
+     * Additional/updated translations.
+     *
+     * @param string $language
+     *
+     * @return string[]
+     */
+    public function customTranslations(string $language): array
+    {
+        // Here we are using an array for translations.
+        // If you had .MO files, you could use them with:
+        // return (new Translation('path/to/file.mo'))->asArray();
+        switch ($language) {
+            case 'da':
+                return $this->danishTranslations();
+            case 'fi':
+                return $this->finnishTranslations();
+            case 'fr':
+            case 'fr-CA':
+                return $this->frenchTranslations();
+            case 'he':
+                return $this->hebrewTranslations();
+            case 'lt':
+                return $this->lithuanianTranslations();
+            case 'nb':
+                return $this->norwegianBokmålTranslations();
+            case 'nl':
+                return $this->dutchTranslations();
+            case 'nn':
+                return $this->norwegianNynorskTranslations();
+            case 'sv':
+                return $this->swedishTranslations();               
+            default:
+                return [];
+        }
+    }
+
+    /**
+     * @return array
+     */
+    protected function lithuanianTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => 'Pusbroliai / Pusseserės',
+            'A tab showing cousins of an individual.' => 'Lapas rodantis asmens pusbrolius ir pusseseres.',
+            'No family available' => 'Šeima nerasta',
+            'Father\'s family (%s)' => 'Tėvo šeima (%s)',
+            'Mother\'s family (%s)' => 'Motinos šeima (%s)',
+            '%2$s has %1$d first cousin recorded' . 
+                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
+                => '%2$s turi %1$d įrašyta pirmos eilės pusbrolį/pusseserę'  . 
+                I18N::PLURAL . '%2$s turi %1$d įrašytus pirmos eilės pusbrolius/pusseseres'  . 
+                I18N::PLURAL . '%2$s turi %1$d įrašytų pirmos eilės pusbrolių/pusseserių',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function danishTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => 'Fætre og kusiner',
+            'A tab showing cousins of an individual.' => 'En fane der viser en persons fætre og kusiner.',
+            'No family available' => 'Ingen familie tilgængelig',
+            'Father\'s family (%s)' => 'Fars familie (%s)',
+            'Mother\'s family (%s)' => 'Mors familie (%s)',
+            '%2$s has %1$d first cousin recorded' .
+                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
+                => '%2$s har %1$d registreret fæter eller kusin'  . 
+                I18N::PLURAL . '%2$s har %1$d registrerede fæter eller kusiner',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function frenchTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => 'Cousins',
+            'A tab showing cousins of an individual.' => 'Onglet montrant les cousins d\'un individu.',
+            'No family available' => 'Pas de famille disponible',
+            'Father\'s family (%s)' => 'Famille paternelle (%s)',
+            'Mother\'s family (%s)' => 'Famille maternelle (%s)',
+            '%2$s has %1$d first cousin recorded' .
+                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
+                => '%2$s a %1$d cousin germain connu'  . 
+                I18N::PLURAL . '%2$s a %1$d cousins germains connus',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function finnishTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => 'Serkut',
+            'A tab showing cousins of an individual.' => 'Välilehti joka näyttää henkilön serkut.',
+            'No family available' => 'Perhe puuttuu',
+            'Father\'s family (%s)' => 'Isän perhe (%s)',
+            'Mother\'s family (%s)' => 'Äidin perhe (%s)',
+            '%2$s has %1$d first cousin recorded' .
+                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
+                => '%2$s:llä on %1$d serkku sivustolla'  . 
+                I18N::PLURAL . '%2$s:lla on %1$d serkkua sivustolla',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function hebrewTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => 'בני דודים',
+            'A tab showing cousins of an individual.' => 'חוצץ המראה בני דוד של אדם.',
+            'No family available' => 'משפחה חסרה',
+            'Father\'s family (%s)' => 'משפחת האב (%s)',
+            'Mother\'s family (%s)' => 'משפחת האם (%s)',
+            '%2$s has %1$d first cousin recorded' .
+                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
+                => 'ל%2$s יש בן דוד אחד מדרגה ראשונה'  . 
+                I18N::PLURAL . 'ל%2$s יש %1$d בני דודים מדרגה ראשונה',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function norwegianBokmålTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => 'Søskenbarn',
+            'A tab showing cousins of an individual.' => 'Fane som viser en persons søskenbarn.',
+            'No family available' => 'Ingen familie tilgjengelig',
+            'Father\'s family (%s)' => 'Fars familie (%s)',
+            'Mother\'s family (%s)' => 'Mors familie (%s)',
+            '%2$s has %1$d first cousin recorded' .
+                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
+                => '%2$s har %1$d registrert søskenbarn'  . 
+                I18N::PLURAL . '%2$s har %1$d registrerte søskenbarn',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function norwegianNynorskTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => 'Syskenbarn',
+            'A tab showing cousins of an individual.' => 'Fane som syner ein person sine syskenbarn.',
+            'No family available' => 'Ingen familie tilgjengeleg',
+            'Father\'s family (%s)' => 'Fars familie (%s)',
+            'Mother\'s family (%s)' => 'Mors familie (%s)',
+            '%2$s has %1$d first cousin recorded' .
+                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
+                => '%2$s har %1$d registrert syskenbarn'  . 
+                I18N::PLURAL . '%2$s har %1$d registrerte syskenbarn',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function dutchTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => 'Neven en Nichten',
+            'A tab showing cousins of an individual.' => 'Tab laat neven en nichten van deze persoon zien.',
+            'No family available' => 'Geen familie gevonden',
+            'Father\'s family (%s)' => 'Vader\'s familie (%s)',
+            'Mother\'s family (%s)' => 'Moeder\'s familie (%s)',
+            '%2$s has %1$d first cousin recorded' .
+                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
+                => '%2$s heeft %1$d neef of nicht in de eerste lijn'  . 
+                I18N::PLURAL . '%2$s heeft %1$d neven en nichten in de eerste lijn',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function swedishTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => 'Kusiner',
+            'A tab showing cousins of an individual.' => 'En flik som visar en persons kusiner.',
+            'No family available' => 'Familj saknas',
+            'Father\'s family (%s)' => 'Faderns familj (%s)',
+            'Mother\'s family (%s)' => 'Moderns familj (%s)',
+            '%2$s has %1$d first cousin recorded' .
+                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
+                => '%2$s har %1$d registrerad kusin'  . 
+                I18N::PLURAL . '%2$s har %1$d registrerade kusiner',
+        ];
+    }
+
+};
 
 return new VytuxCousinsTabModule;
