@@ -259,7 +259,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      * @param UserInterface $user A user (or visitor) object.
      * @param Tree|null     $tree Note that $tree can be null (if all trees are private).
      */
-    public function boot(UserInterface $user, ?Tree $tree): void
+    public function boot(): void
     {
         // Here is also a good place to register any views (templates) used by the module.
         // This command allows the module to use: view($this->name() . '::', 'fish')
