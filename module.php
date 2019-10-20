@@ -43,6 +43,7 @@ use Fisharebest\Webtrees\Module\ModuleTabTrait;
 use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\View;
 use Fisharebest\Localization\Translation;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * vytux_cousins module
@@ -218,13 +219,16 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
         return GedcomCodePedi::getValue('',$individual->getInstance($individual->xref(),$individual->tree()));
     }
 
-
     /**
-     * @return string
+     * @return ResponseInterface
      */
-    public function css(): string
+    function getCssAction() : ResponseInterface
     {
-        return $this->assetUrl('css/vytux_cousins.css');
+        return response(
+            file_get_contents($this->resourcesFolder() . 'css/vytux_cousins.css'), 
+            200,
+            ['Content-type' => 'text/css']
+        );
     }
 
     /** {@inheritdoc} */
@@ -232,7 +236,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     {
         return view($this->name() . '::tab', [
             'cousins_obj'   => $this->getCousins($individual),
-            'cousins_css'   => $this->css(),
+            'cousins_css'   => route('module', ['module' => $this->name(), 'action' => 'Css']),
             'module_obj'    => $this,
         ]); 
     }
