@@ -22,7 +22,7 @@
                         <?php else: ?>
                             <span class="cousins_name"><?= $cousin->fullName() ?></span>
                         <?php endif ?>
-                        <span class="cousins_lifespan" ><?= $cousin->getLifeSpan() ?></span>
+                        <span class="cousins_lifespan" ><?= $cousin->lifespan() ?></span>
                         <span class="cousins_pedi"><?= $module_obj->getChildLabel($cousin) ?></span>
 			        </div>
                 <?php $i++; endforeach ?>
@@ -42,7 +42,7 @@
                         <?php else: ?>
                             <span class="cousins_name"><?= $cousin->fullName() ?></span>
                         <?php endif ?>
-                        <span class="cousins_lifespan" ><?= $cousin->getLifeSpan() ?></span>
+                        <span class="cousins_lifespan" ><?= $cousin->lifespan() ?></span>
                         <span class="cousins_pedi"><?= $module_obj->getChildLabel($cousin) ?></span>
 			        </div>
                 <?php $i++; endforeach ?>
