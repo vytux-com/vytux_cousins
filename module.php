@@ -156,10 +156,10 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
         $cousinsObj->allCousinCount = 0;
         $cousinsObj->fatherCousins = [];
         $cousinsObj->motherCousins = [];
-        if ($individual->primaryChildFamily()) {
-            $cousinsObj->father = $individual->primaryChildFamily()->husband();
-            if (($cousinsObj->father) && ($cousinsObj->father->primaryChildFamily())) {
-                foreach ($cousinsObj->father->primaryChildFamily()->children() as $sibling) {
+        if ($individual->childFamilies()->first()) {
+            $cousinsObj->father = $individual->childFamilies()->first()->husband();
+            if (($cousinsObj->father) && ($cousinsObj->father->childFamilies()->first())) {
+                foreach ($cousinsObj->father->childFamilies()->first()->children() as $sibling) {
                     if ($sibling !== $cousinsObj->father) {
                         foreach ($sibling->spouseFamilies() as $fam) {
                             foreach ($fam->children() as $child) {
@@ -171,9 +171,9 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
                 } 
             }
 
-            $cousinsObj->mother = $individual->primaryChildFamily()->wife();
-            if (($cousinsObj->mother) && ($cousinsObj->mother->primaryChildFamily())) {
-                foreach ($cousinsObj->mother->primaryChildFamily()->children() as $sibling) {
+            $cousinsObj->mother = $individual->childFamilies()->first()->wife();
+            if (($cousinsObj->mother) && ($cousinsObj->mother->childFamilies()->first())) {
+                foreach ($cousinsObj->mother->childFamilies()->first()->children() as $sibling) {
                     if ($sibling !== $cousinsObj->mother) {
                         foreach ($sibling->spouseFamilies() as $fam) {
                             foreach ($fam->children() as $child) {
@@ -210,7 +210,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      */
     public function getChildLabel(Individual $individual): string
     {
-        if (preg_match('/\n1 FAMC @' . $individual->primaryChildFamily()->xref() . '@(?:\n[2-9].*)*\n2 PEDI (.+)/', $individual->gedcom(), $match)) {
+        if (preg_match('/\n1 FAMC @' . $individual->childFamilies()->first()->xref() . '@(?:\n[2-9].*)*\n2 PEDI (.+)/', $individual->gedcom(), $match)) {
             // A specified pedigree
             return GedcomCodePedi::getValue($match[1],$individual->getInstance($individual->xref(),$individual->tree()));
         }
