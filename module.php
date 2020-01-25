@@ -302,7 +302,9 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             case 'nn':
                 return $this->norwegianNynorskTranslations();
             case 'sv':
-                return $this->swedishTranslations();               
+                return $this->swedishTranslations();
+			case 'cs':
+                return $this->czechTranslations();    				
             default:
                 return [];
         }
@@ -477,6 +479,26 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
                 I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
                 => '%2$s har %1$d registrerad kusin'  . 
                 I18N::PLURAL . '%2$s har %1$d registrerade kusiner',
+        ];
+    }
+	
+	/**
+     * @return array
+     */
+    protected function czechTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => 'Bratranci',
+            'A tab showing cousins of an individual.' => 'Panel zobrazující bratrance osoby.',
+            'No family available' => 'Rodina chybí',
+            'Father\'s family (%s)' => 'Otcova rodina (%s)',
+            'Mother\'s family (%s)' => 'Matčina rodina (%s)',
+            '%2$s has %1$d first cousin recorded' . 
+                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
+                => '%2$s má %1$d bratrance'  . 
+                I18N::PLURAL . '%2$s má %1$d bratrance'  . 
+                I18N::PLURAL . '%2$s má %1$d bratranců',
         ];
     }
 
