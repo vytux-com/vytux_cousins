@@ -38,7 +38,7 @@
                     <div class="wt-chart-box-<?= strtolower($cousin->sex()) ?>">
                         <span class="cousins_counter"><?= $i ?> </span>
                         <?php if ($cousin->canShow()): ?>
-                            <span class="cousins_name"><a href=""><?= $cousin->fullName() ?></a></span>
+                            <span class="cousins_name"><a href="<?= e($cousin->url()) ?>"><?= $cousin->fullName() ?></a></span>
                         <?php else: ?>
                             <span class="cousins_name"><?= $cousin->fullName() ?></span>
                         <?php endif ?>
