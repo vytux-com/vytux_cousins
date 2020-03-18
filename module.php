@@ -89,7 +89,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      */
     public function customModuleVersion(): string
     {
-        return '2.0.0';
+        return '2.0.1';
     }
 
     /**
@@ -99,7 +99,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      */
     public function customModuleLatestVersionUrl(): string
     {
-        return 'https://vytux.com/main/projects/webtrees/vytux_cousins/';
+        return 'https://raw.githubusercontent.com/vytux-com/vytux_cousins/master/latest.txt';
     }
 
     /**
