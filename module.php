@@ -305,6 +305,8 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
                 return $this->swedishTranslations();
 			case 'cs':
                 return $this->czechTranslations();    				
+			case 'de':
+                return $this->germanTranslations();    				
             default:
                 return [];
         }
@@ -325,6 +327,26 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             '%2$s has %1$d first cousin recorded' . 
                 I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
                 => '%2$s turi %1$d įrašyta pirmos eilės pusbrolį/pusseserę'  . 
+                I18N::PLURAL . '%2$s turi %1$d įrašytus pirmos eilės pusbrolius/pusseseres'  . 
+                I18N::PLURAL . '%2$s turi %1$d įrašytų pirmos eilės pusbrolių/pusseserių',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function germanTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => 'Vettern / Kusinen',
+            'A tab showing cousins of an individual.' => 'Ein Reiter, der Vettern + Kusinen der Person anzeigt.',
+            'No family available' => 'Es gibt keine Familie',
+            'Father\'s family (%s)' => 'Väterlicherseits (%s)',
+            'Mother\'s family (%s)' => 'Mütterlicherseits (%s)',
+            '%2$s has %1$d first cousin recorded' . 
+                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
+                => '%2$s hat %1$d direkte Vettern / Kusinen.'  . 
                 I18N::PLURAL . '%2$s turi %1$d įrašytus pirmos eilės pusbrolius/pusseseres'  . 
                 I18N::PLURAL . '%2$s turi %1$d įrašytų pirmos eilės pusbrolių/pusseserių',
         ];
