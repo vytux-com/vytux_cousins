@@ -344,11 +344,10 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             'No family available' => 'Es gibt keine Familie',
             'Father\'s family (%s)' => 'Väterlicherseits (%s)',
             'Mother\'s family (%s)' => 'Mütterlicherseits (%s)',
-            '%2$s has %1$d first cousin recorded' . 
+            '%2$s has %1$d first cousin recorded' .
                 I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
-                => '%2$s hat %1$d direkte Vettern / Kusinen.'  . 
-                I18N::PLURAL . '%2$s turi %1$d įrašytus pirmos eilės pusbrolius/pusseseres'  . 
-                I18N::PLURAL . '%2$s turi %1$d įrašytų pirmos eilės pusbrolių/pusseserių',
+                => '%2$s hat einen Vetter oder eine Kusine ersten Grades'  . 
+                I18N::PLURAL . '%2$s hat %1$d Vettern / Kusinen ersten Grades',
         ];
     }
 
