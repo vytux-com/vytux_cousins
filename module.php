@@ -339,15 +339,15 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
-            'Cousins' => 'Vettern / Kusinen',
-            'A tab showing cousins of an individual.' => 'Ein Reiter, der Vettern + Kusinen der Person anzeigt.',
+            'Cousins' => 'Cousins und Cousinen',
+            'A tab showing cousins of an individual.' => 'Ein Reiter, der Cousins und Cousinen der Person anzeigt.',
             'No family available' => 'Es gibt keine Familie',
             'Father\'s family (%s)' => 'Väterlicherseits (%s)',
             'Mother\'s family (%s)' => 'Mütterlicherseits (%s)',
             '%2$s has %1$d first cousin recorded' .
                 I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
-                => '%2$s hat einen Vetter oder eine Kusine ersten Grades'  . 
-                I18N::PLURAL . '%2$s hat %1$d Vettern / Kusinen ersten Grades',
+                => '%2$s hat einen Cousin oder eine Cousine ersten Grades'  . 
+                I18N::PLURAL . '%2$s hat %1$d Cousins oder Cousinen ersten Grades',
         ];
     }
 
