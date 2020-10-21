@@ -48,7 +48,8 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * vytux_cousins module
  */
-class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface, ModuleCustomInterface {
+class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface, ModuleCustomInterface
+{
     use ModuleCustomTrait;
     use ModuleTabTrait;
 
@@ -57,7 +58,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return string
      */
-    public function title(): string
+    public function title() : string
     {
         return /* I18N: Name of a module/tab on the individual page. */ I18N::translate('Cousins');
     }
@@ -67,7 +68,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return string
      */
-    public function description(): string
+    public function description() : string
     {
         return /* I18N: Description of the "Facts and events" module */ I18N::translate('A tab showing cousins of an individual.');
     }
@@ -77,7 +78,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return string
      */
-    public function customModuleAuthorName(): string
+    public function customModuleAuthorName() : string
     {
         return 'Vytautas Krivickas';
     }
@@ -87,7 +88,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return string
      */
-    public function customModuleVersion(): string
+    public function customModuleVersion() : string
     {
         return '2.0.1';
     }
@@ -97,7 +98,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return string
      */
-    public function customModuleLatestVersionUrl(): string
+    public function customModuleLatestVersionUrl() : string
     {
         return 'https://raw.githubusercontent.com/vytux-com/vytux_cousins/master/latest.txt';
     }
@@ -107,7 +108,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return string
      */
-    public function customModuleSupportUrl(): string
+    public function customModuleSupportUrl() : string
     {
         return 'https://vytux.com/main/contact-us/';
     }
@@ -117,7 +118,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return int
      */
-    public function defaultTabOrder(): int
+    public function defaultTabOrder() : int
     {
         return 10;
     }
@@ -129,7 +130,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return bool
      */
-    public function hasTabContent(Individual $individual): bool
+    public function hasTabContent(Individual $individual) : bool
     {
         return true;
     }
@@ -142,12 +143,12 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return bool
      */
-    public function isGrayedOut(Individual $individual): bool
+    public function isGrayedOut(Individual $individual) : bool
     {
         return false;
     }
 
-    private function getCousins(Individual $individual): object
+    private function getCousins(Individual $individual) : object
     {
         $cousinsObj = (object)[];
         $cousinsObj->self = $individual;
@@ -168,7 +169,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
                             }
                         }
                     }
-                } 
+                }
             }
 
             $cousinsObj->mother = $individual->childFamilies()->first()->wife();
@@ -182,10 +183,10 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
                             }
                         }
                     }
-                } 
+                }
             }
 
-            $cousinsObj->allCousinCount = sizeof(array_unique(array_merge($cousinsObj->fatherCousins,$cousinsObj->motherCousins)));
+            $cousinsObj->allCousinCount = sizeof(array_unique(array_merge($cousinsObj->fatherCousins, $cousinsObj->motherCousins)));
         }
 
         return $cousinsObj;
@@ -196,7 +197,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return string
      */
-    public function resourcesFolder(): string
+    public function resourcesFolder() : string
     {
         return __DIR__ . '/resources/';
     }
@@ -208,15 +209,19 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return string
      */
-    public function getChildLabel(Individual $individual): string
+    public function getChildLabel(Individual $individual) : string
     {
-        if (preg_match('/\n1 FAMC @' . $individual->childFamilies()->first()->xref() . '@(?:\n[2-9].*)*\n2 PEDI (.+)/', $individual->gedcom(), $match)) {
+        if (preg_match(
+            '/\n1 FAMC @' . $individual->childFamilies()->first()->xref() . '@(?:\n[2-9].*)*\n2 PEDI (.+)/',
+            $individual->gedcom(),
+            $match
+        )) {
             // A specified pedigree
-            return GedcomCodePedi::getValue($match[1],$individual->getInstance($individual->xref(),$individual->tree()));
+            return GedcomCodePedi::getValue($match[1], $individual->getInstance($individual->xref(), $individual->tree()));
         }
 
         // Default (birth) pedigree
-        return GedcomCodePedi::getValue('',$individual->getInstance($individual->xref(),$individual->tree()));
+        return GedcomCodePedi::getValue('', $individual->getInstance($individual->xref(), $individual->tree()));
     }
 
     /**
@@ -225,24 +230,27 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     function getCssAction() : ResponseInterface
     {
         return response(
-            file_get_contents($this->resourcesFolder() . 'css/vytux_cousins.css'), 
+            file_get_contents($this->resourcesFolder() . 'css/vytux_cousins.css'),
             200,
             ['Content-type' => 'text/css']
         );
     }
 
     /** {@inheritdoc} */
-    public function getTabContent(Individual $individual): string
+    public function getTabContent(Individual $individual) : string
     {
-        return view($this->name() . '::tab', [
-            'cousins_obj'   => $this->getCousins($individual),
-            'cousins_css'   => route('module', ['module' => $this->name(), 'action' => 'Css']),
-            'module_obj'    => $this,
-        ]); 
+        return view(
+            $this->name() . '::tab',
+            [
+                'cousins_obj'   => $this->getCousins($individual),
+                'cousins_css'   => route('module', ['module' => $this->name(), 'action' => 'Css']),
+                'module_obj'    => $this,
+            ]
+        );
     }
 
     /** {@inheritdoc} */
-    public function canLoadAjax(): bool
+    public function canLoadAjax() : bool
     {
         return false;
     }
@@ -250,8 +258,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     /**
      *  Constructor.
      */
-    public function __construct()
-    {
+    public function __construct() {
         // IMPORTANT - the constructor is called on *all* modules, even ones that are disabled.
         // It is also called before the webtrees framework is initialised, and so other components
         // will not yet exist.
@@ -263,7 +270,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      * @param UserInterface $user A user (or visitor) object.
      * @param Tree|null     $tree Note that $tree can be null (if all trees are private).
      */
-    public function boot(): void
+    public function boot() : void
     {
         // Here is also a good place to register any views (templates) used by the module.
         // This command allows the module to use: view($this->name() . '::', 'fish')
@@ -278,7 +285,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return string[]
      */
-    public function customTranslations(string $language): array
+    public function customTranslations(string $language) : array
     {
         // Here we are using an array for translations.
         // If you had .MO files, you could use them with:
@@ -286,27 +293,38 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
         switch ($language) {
             case 'da':
                 return $this->danishTranslations();
+
             case 'fi':
                 return $this->finnishTranslations();
+
             case 'fr':
             case 'fr-CA':
                 return $this->frenchTranslations();
+
             case 'he':
                 return $this->hebrewTranslations();
+
             case 'lt':
                 return $this->lithuanianTranslations();
+
             case 'nb':
                 return $this->norwegianBokmålTranslations();
+
             case 'nl':
                 return $this->dutchTranslations();
+
             case 'nn':
                 return $this->norwegianNynorskTranslations();
+
             case 'sv':
                 return $this->swedishTranslations();
-			case 'cs':
-                return $this->czechTranslations();    				
-			case 'de':
-                return $this->germanTranslations();    				
+
+            case 'cs':
+                return $this->czechTranslations();
+
+            case 'de':
+                return $this->germanTranslations();
+
             default:
                 return [];
         }
@@ -315,7 +333,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     /**
      * @return array
      */
-    protected function lithuanianTranslations(): array
+    protected function lithuanianTranslations() : array
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
@@ -324,18 +342,17 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             'No family available' => 'Šeima nerasta',
             'Father\'s family (%s)' => 'Tėvo šeima (%s)',
             'Mother\'s family (%s)' => 'Motinos šeima (%s)',
-            '%2$s has %1$d first cousin recorded' . 
-                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
-                => '%2$s turi %1$d įrašyta pirmos eilės pusbrolį/pusseserę'  . 
-                I18N::PLURAL . '%2$s turi %1$d įrašytus pirmos eilės pusbrolius/pusseseres'  . 
-                I18N::PLURAL . '%2$s turi %1$d įrašytų pirmos eilės pusbrolių/pusseserių',
+            '%2$s has %1$d first cousin recorded'
+                . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s turi %1$d įrašyta pirmos eilės pusbrolį/pusseserę'
+                . I18N::PLURAL . '%2$s turi %1$d įrašytus pirmos eilės pusbrolius/pusseseres'
+                . I18N::PLURAL . '%2$s turi %1$d įrašytų pirmos eilės pusbrolių/pusseserių',
         ];
     }
 
     /**
      * @return array
      */
-    protected function germanTranslations(): array
+    protected function germanTranslations() : array
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
@@ -344,17 +361,16 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             'No family available' => 'Es gibt keine Familie',
             'Father\'s family (%s)' => 'Väterlicherseits (%s)',
             'Mother\'s family (%s)' => 'Mütterlicherseits (%s)',
-            '%2$s has %1$d first cousin recorded' .
-                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
-                => '%2$s hat einen Cousin oder eine Cousine ersten Grades'  . 
-                I18N::PLURAL . '%2$s hat %1$d Cousins oder Cousinen ersten Grades',
+            '%2$s has %1$d first cousin recorded'
+                . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s hat einen Cousin oder eine Cousine ersten Grades'
+                . I18N::PLURAL . '%2$s hat %1$d Cousins oder Cousinen ersten Grades',
         ];
     }
 
     /**
      * @return array
      */
-    protected function danishTranslations(): array
+    protected function danishTranslations() : array
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
@@ -363,17 +379,16 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             'No family available' => 'Ingen familie tilgængelig',
             'Father\'s family (%s)' => 'Fars familie (%s)',
             'Mother\'s family (%s)' => 'Mors familie (%s)',
-            '%2$s has %1$d first cousin recorded' .
-                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
-                => '%2$s har %1$d registreret fæter eller kusin'  . 
-                I18N::PLURAL . '%2$s har %1$d registrerede fæter eller kusiner',
+            '%2$s has %1$d first cousin recorded'
+                . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s har %1$d registreret fæter eller kusin'
+                . I18N::PLURAL . '%2$s har %1$d registrerede fæter eller kusiner',
         ];
     }
 
     /**
      * @return array
      */
-    protected function frenchTranslations(): array
+    protected function frenchTranslations() : array
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
@@ -382,17 +397,16 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             'No family available' => 'Pas de famille disponible',
             'Father\'s family (%s)' => 'Famille paternelle (%s)',
             'Mother\'s family (%s)' => 'Famille maternelle (%s)',
-            '%2$s has %1$d first cousin recorded' .
-                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
-                => '%2$s a %1$d cousin germain connu'  . 
-                I18N::PLURAL . '%2$s a %1$d cousins germains connus',
+            '%2$s has %1$d first cousin recorded'
+                . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s a %1$d cousin germain connu'
+                . I18N::PLURAL . '%2$s a %1$d cousins germains connus',
         ];
     }
 
     /**
      * @return array
      */
-    protected function finnishTranslations(): array
+    protected function finnishTranslations() : array
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
@@ -401,17 +415,16 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             'No family available' => 'Perhe puuttuu',
             'Father\'s family (%s)' => 'Isän perhe (%s)',
             'Mother\'s family (%s)' => 'Äidin perhe (%s)',
-            '%2$s has %1$d first cousin recorded' .
-                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
-                => '%2$s:llä on %1$d serkku sivustolla'  . 
-                I18N::PLURAL . '%2$s:lla on %1$d serkkua sivustolla',
+            '%2$s has %1$d first cousin recorded'
+                . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s:llä on %1$d serkku sivustolla'
+                . I18N::PLURAL . '%2$s:lla on %1$d serkkua sivustolla',
         ];
     }
 
     /**
      * @return array
      */
-    protected function hebrewTranslations(): array
+    protected function hebrewTranslations() : array
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
@@ -420,17 +433,16 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             'No family available' => 'משפחה חסרה',
             'Father\'s family (%s)' => 'משפחת האב (%s)',
             'Mother\'s family (%s)' => 'משפחת האם (%s)',
-            '%2$s has %1$d first cousin recorded' .
-                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
-                => 'ל%2$s יש בן דוד אחד מדרגה ראשונה'  . 
-                I18N::PLURAL . 'ל%2$s יש %1$d בני דודים מדרגה ראשונה',
+            '%2$s has %1$d first cousin recorded'
+                . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => 'ל%2$s יש בן דוד אחד מדרגה ראשונה'
+                . I18N::PLURAL . 'ל%2$s יש %1$d בני דודים מדרגה ראשונה',
         ];
     }
 
     /**
      * @return array
      */
-    protected function norwegianBokmålTranslations(): array
+    protected function norwegianBokmålTranslations() : array
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
@@ -439,17 +451,16 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             'No family available' => 'Ingen familie tilgjengelig',
             'Father\'s family (%s)' => 'Fars familie (%s)',
             'Mother\'s family (%s)' => 'Mors familie (%s)',
-            '%2$s has %1$d first cousin recorded' .
-                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
-                => '%2$s har %1$d registrert søskenbarn'  . 
-                I18N::PLURAL . '%2$s har %1$d registrerte søskenbarn',
+            '%2$s has %1$d first cousin recorded'
+                . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s har %1$d registrert søskenbarn'
+                . I18N::PLURAL . '%2$s har %1$d registrerte søskenbarn',
         ];
     }
 
     /**
      * @return array
      */
-    protected function norwegianNynorskTranslations(): array
+    protected function norwegianNynorskTranslations() : array
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
@@ -458,17 +469,16 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             'No family available' => 'Ingen familie tilgjengeleg',
             'Father\'s family (%s)' => 'Fars familie (%s)',
             'Mother\'s family (%s)' => 'Mors familie (%s)',
-            '%2$s has %1$d first cousin recorded' .
-                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
-                => '%2$s har %1$d registrert syskenbarn'  . 
-                I18N::PLURAL . '%2$s har %1$d registrerte syskenbarn',
+            '%2$s has %1$d first cousin recorded'
+                . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s har %1$d registrert syskenbarn'
+                . I18N::PLURAL . '%2$s har %1$d registrerte syskenbarn',
         ];
     }
 
     /**
      * @return array
      */
-    protected function dutchTranslations(): array
+    protected function dutchTranslations() : array
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
@@ -477,17 +487,16 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             'No family available' => 'Geen familie gevonden',
             'Father\'s family (%s)' => 'Vader\'s familie (%s)',
             'Mother\'s family (%s)' => 'Moeder\'s familie (%s)',
-            '%2$s has %1$d first cousin recorded' .
-                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
-                => '%2$s heeft %1$d neef of nicht in de eerste lijn'  . 
-                I18N::PLURAL . '%2$s heeft %1$d neven en nichten in de eerste lijn',
+            '%2$s has %1$d first cousin recorded'
+                . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s heeft %1$d neef of nicht in de eerste lijn'
+                . I18N::PLURAL . '%2$s heeft %1$d neven en nichten in de eerste lijn',
         ];
     }
 
     /**
      * @return array
      */
-    protected function swedishTranslations(): array
+    protected function swedishTranslations() : array
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
@@ -496,17 +505,16 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             'No family available' => 'Familj saknas',
             'Father\'s family (%s)' => 'Faderns familj (%s)',
             'Mother\'s family (%s)' => 'Moderns familj (%s)',
-            '%2$s has %1$d first cousin recorded' .
-                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
-                => '%2$s har %1$d registrerad kusin'  . 
-                I18N::PLURAL . '%2$s har %1$d registrerade kusiner',
+            '%2$s has %1$d first cousin recorded'
+                . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s har %1$d registrerad kusin'
+                . I18N::PLURAL . '%2$s har %1$d registrerade kusiner',
         ];
     }
-	
-	/**
+
+    /**
      * @return array
      */
-    protected function czechTranslations(): array
+    protected function czechTranslations() : array
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
@@ -515,14 +523,12 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             'No family available' => 'Rodina chybí',
             'Father\'s family (%s)' => 'Otcova rodina (%s)',
             'Mother\'s family (%s)' => 'Matčina rodina (%s)',
-            '%2$s has %1$d first cousin recorded' . 
-                I18N::PLURAL . '%2$s has %1$d first cousins recorded'   
-                => '%2$s má %1$d bratrance'  . 
-                I18N::PLURAL . '%2$s má %1$d bratrance'  . 
-                I18N::PLURAL . '%2$s má %1$d bratranců',
+            '%2$s has %1$d first cousin recorded'
+                . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s má %1$d bratrance'
+                . I18N::PLURAL . '%2$s má %1$d bratrance'
+                . I18N::PLURAL . '%2$s má %1$d bratranců',
         ];
     }
-
 };
 
 return new VytuxCousinsTabModule;
