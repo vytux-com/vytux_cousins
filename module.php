@@ -159,32 +159,51 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
         $cousinsObj->motherCousins = [];
         if ($individual->childFamilies()->first()) {
             $cousinsObj->father = $individual->childFamilies()->first()->husband();
-            if (($cousinsObj->father) && ($cousinsObj->father->childFamilies()->first())) {
-                foreach ($cousinsObj->father->childFamilies()->first()->children() as $sibling) {
-                    if ($sibling !== $cousinsObj->father) {
-                        foreach ($sibling->spouseFamilies() as $fam) {
-                            foreach ($fam->children() as $child) {
-                                $cousinsObj->fatherCousins[] = $child;
-                                $cousinsObj->fathersCousinCount++;
-                            }
-                        }
-                    }
-                }
-            }
-
             $cousinsObj->mother = $individual->childFamilies()->first()->wife();
-            if (($cousinsObj->mother) && ($cousinsObj->mother->childFamilies()->first())) {
-                foreach ($cousinsObj->mother->childFamilies()->first()->children() as $sibling) {
-                    if ($sibling !== $cousinsObj->mother) {
-                        foreach ($sibling->spouseFamilies() as $fam) {
-                            foreach ($fam->children() as $child) {
-                                $cousinsObj->motherCousins[] = $child;
-                                $cousinsObj->mothersCousinCount++;
-                            }
+
+            if ($cousinsObj->father) {
+               foreach ($cousinsObj->father->childFamilies() as $family) {
+                  foreach ($family->spouses() as $parent) {
+                     foreach ($parent->spouseFamilies() as $family2) {
+                        foreach ($family2->children() as $sibling) {
+                           if ($sibling !== $cousinsObj->father) {
+                              foreach ($sibling->spouseFamilies() as $fam) {
+                                 foreach ($fam->children() as $child) {
+                                    $cousinsObj->fatherCousins[] = $child;
+                                    $cousinsObj->fathersCousinCount++;
+                                 }
+                              }
+                           }
                         }
-                    }
-                }
+                     }
+                  }
+               }
             }
+            $cousinsObj->fatherCousins = array_unique( $cousinsObj->fatherCousins );
+            $cousinsObj->fathersCousinCount = sizeof( $cousinsObj->fatherCousins );
+
+            if ($cousinsObj->mother) {
+               foreach ($cousinsObj->mother->childFamilies() as $family) {
+                  foreach ($family->spouses() as $parent) {
+                     foreach ($parent->spouseFamilies() as $family2) {
+                        foreach ($family2->children() as $sibling) {
+                           if ($sibling !== $cousinsObj->mother) {
+                              foreach ($sibling->spouseFamilies() as $fam) {
+                                 foreach ($fam->children() as $child) {
+									if ( in_array( $child, $cousinsObj->fatherCousins )){} else {
+                                       $cousinsObj->motherCousins[] = $child;
+                                       $cousinsObj->mothersCousinCount++;
+									}
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+			}
+            $cousinsObj->motherCousins = array_unique( $cousinsObj->motherCousins );
+            $cousinsObj->mothersCousinCount = sizeof( $cousinsObj->motherCousins );
 
             $cousinsObj->allCousinCount = sizeof(array_unique(array_merge($cousinsObj->fatherCousins, $cousinsObj->motherCousins)));
         }
