@@ -1,4 +1,5 @@
 <?php
+
 namespace Vytux\WebtreesModules\VytuxCousins;
 /*
  * webtrees - vytux_cousins tab based on simpl_cousins
@@ -27,13 +28,15 @@ namespace Vytux\WebtreesModules\VytuxCousins;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
 use Fisharebest\Webtrees\Fact;
 use Fisharebest\Webtrees\Gedcom;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Family;
 use Fisharebest\Webtrees\Auth;
-use Fisharebest\Webtrees\GedcomCode\GedcomCodePedi;
+use Fisharebest\Webtrees\Registry;
+use Fisharebest\Webtrees\Elements\PedigreeLinkageType;
 use Fisharebest\Webtrees\Contracts\UserInterface;
 use Fisharebest\Webtrees\Module\AbstractModule;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
@@ -58,7 +61,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return string
      */
-    public function title() : string
+    public function title(): string
     {
         return /* I18N: Name of a module/tab on the individual page. */ I18N::translate('Cousins');
     }
@@ -68,7 +71,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return string
      */
-    public function description() : string
+    public function description(): string
     {
         return /* I18N: Description of the "Facts and events" module */ I18N::translate('A tab showing cousins of an individual.');
     }
@@ -78,7 +81,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return string
      */
-    public function customModuleAuthorName() : string
+    public function customModuleAuthorName(): string
     {
         return 'Vytautas Krivickas';
     }
@@ -88,9 +91,9 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return string
      */
-    public function customModuleVersion() : string
+    public function customModuleVersion(): string
     {
-        return '2.0.1';
+        return '2.1.0';
     }
 
     /**
@@ -98,7 +101,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return string
      */
-    public function customModuleLatestVersionUrl() : string
+    public function customModuleLatestVersionUrl(): string
     {
         return 'https://raw.githubusercontent.com/vytux-com/vytux_cousins/master/latest.txt';
     }
@@ -108,7 +111,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return string
      */
-    public function customModuleSupportUrl() : string
+    public function customModuleSupportUrl(): string
     {
         return 'https://vytux.com/main/contact-us/';
     }
@@ -118,7 +121,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return int
      */
-    public function defaultTabOrder() : int
+    public function defaultTabOrder(): int
     {
         return 10;
     }
@@ -130,7 +133,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return bool
      */
-    public function hasTabContent(Individual $individual) : bool
+    public function hasTabContent(Individual $individual): bool
     {
         return true;
     }
@@ -143,12 +146,12 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return bool
      */
-    public function isGrayedOut(Individual $individual) : bool
+    public function isGrayedOut(Individual $individual): bool
     {
         return false;
     }
 
-    private function getCousins(Individual $individual) : object
+    private function getCousins(Individual $individual): object
     {
         $cousinsObj = (object)[];
         $cousinsObj->self = $individual;
@@ -197,7 +200,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return string
      */
-    public function resourcesFolder() : string
+    public function resourcesFolder(): string
     {
         return __DIR__ . '/resources/';
     }
@@ -205,29 +208,27 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     /**
      * A label for a parental family group
      *
-     * @param Family $family
+     * @param Individual $individual
      *
      * @return string
      */
-    public function getChildLabel(Individual $individual) : string
+    public function getChildLabel(Individual $individual): string
     {
-        if (preg_match(
-            '/\n1 FAMC @' . $individual->childFamilies()->first()->xref() . '@(?:\n[2-9].*)*\n2 PEDI (.+)/',
-            $individual->gedcom(),
-            $match
-        )) {
-            // A specified pedigree
-            return GedcomCodePedi::getValue($match[1], $individual->getInstance($individual->xref(), $individual->tree()));
+        $pedi = $individual->facts(['FAMC'])->first()->attribute('PEDI');
+
+        if ($pedi !== '' && $pedi !== PedigreeLinkageType::VALUE_BIRTH) {
+            $pedigree  = Registry::elementFactory()->make('INDI:FAMC:PEDI')->value($pedi, $individual->tree());
+        } else {
+            $pedigree  = Registry::elementFactory()->make('INDI:FAMC:PEDI')->value('', $individual->tree());
         }
 
-        // Default (birth) pedigree
-        return GedcomCodePedi::getValue('', $individual->getInstance($individual->xref(), $individual->tree()));
+        return $pedigree;
     }
 
     /**
      * @return ResponseInterface
      */
-    function getCssAction() : ResponseInterface
+    function getCssAction(): ResponseInterface
     {
         return response(
             file_get_contents($this->resourcesFolder() . 'css/vytux_cousins.css'),
@@ -237,7 +238,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     }
 
     /** {@inheritdoc} */
-    public function getTabContent(Individual $individual) : string
+    public function getTabContent(Individual $individual): string
     {
         return view(
             $this->name() . '::tab',
@@ -250,7 +251,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     }
 
     /** {@inheritdoc} */
-    public function canLoadAjax() : bool
+    public function canLoadAjax(): bool
     {
         return false;
     }
@@ -258,7 +259,8 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     /**
      *  Constructor.
      */
-    public function __construct() {
+    public function __construct()
+    {
         // IMPORTANT - the constructor is called on *all* modules, even ones that are disabled.
         // It is also called before the webtrees framework is initialised, and so other components
         // will not yet exist.
@@ -270,7 +272,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      * @param UserInterface $user A user (or visitor) object.
      * @param Tree|null     $tree Note that $tree can be null (if all trees are private).
      */
-    public function boot() : void
+    public function boot(): void
     {
         // Here is also a good place to register any views (templates) used by the module.
         // This command allows the module to use: view($this->name() . '::', 'fish')
@@ -285,7 +287,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return string[]
      */
-    public function customTranslations(string $language) : array
+    public function customTranslations(string $language): array
     {
         // Here we are using an array for translations.
         // If you had .MO files, you could use them with:
@@ -333,7 +335,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     /**
      * @return array
      */
-    protected function lithuanianTranslations() : array
+    protected function lithuanianTranslations(): array
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
@@ -352,7 +354,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     /**
      * @return array
      */
-    protected function germanTranslations() : array
+    protected function germanTranslations(): array
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
@@ -370,7 +372,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     /**
      * @return array
      */
-    protected function danishTranslations() : array
+    protected function danishTranslations(): array
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
@@ -388,7 +390,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     /**
      * @return array
      */
-    protected function frenchTranslations() : array
+    protected function frenchTranslations(): array
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
@@ -406,7 +408,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     /**
      * @return array
      */
-    protected function finnishTranslations() : array
+    protected function finnishTranslations(): array
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
@@ -424,7 +426,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     /**
      * @return array
      */
-    protected function hebrewTranslations() : array
+    protected function hebrewTranslations(): array
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
@@ -442,7 +444,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     /**
      * @return array
      */
-    protected function norwegianBokmålTranslations() : array
+    protected function norwegianBokmålTranslations(): array
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
@@ -460,7 +462,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     /**
      * @return array
      */
-    protected function norwegianNynorskTranslations() : array
+    protected function norwegianNynorskTranslations(): array
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
@@ -478,7 +480,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     /**
      * @return array
      */
-    protected function dutchTranslations() : array
+    protected function dutchTranslations(): array
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
@@ -496,7 +498,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     /**
      * @return array
      */
-    protected function swedishTranslations() : array
+    protected function swedishTranslations(): array
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
@@ -514,7 +516,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     /**
      * @return array
      */
-    protected function czechTranslations() : array
+    protected function czechTranslations(): array
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
