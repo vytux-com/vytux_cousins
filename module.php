@@ -214,8 +214,13 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      */
     public function getChildLabel(Individual $individual): string
     {
-        $pedi = $individual->facts(['FAMC'])->first()->attribute('PEDI');
-
+        $fact = $individual->facts(['FAMC'])->first();
+        if ($fact instanceof Fact) {
+            $pedi = $fact->attribute('PEDI');
+        } else {
+            $pedi = '';
+        }
+        
         if ($pedi !== '' && $pedi !== PedigreeLinkageType::VALUE_BIRTH) {
             $pedigree  = Registry::elementFactory()->make('INDI:FAMC:PEDI')->value($pedi, $individual->tree());
         } else {
