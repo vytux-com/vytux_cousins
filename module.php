@@ -238,7 +238,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
         return response(
             file_get_contents($this->resourcesFolder() . 'css/vytux_cousins.css'),
             200,
-            ['Content-type' => 'text/css']
+            ['content-type' => 'text/css']
         );
     }
 
