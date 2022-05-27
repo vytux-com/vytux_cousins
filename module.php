@@ -93,7 +93,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      */
     public function customModuleVersion(): string
     {
-        return '2.1.0';
+        return '2.1.1';
     }
 
     /**
@@ -113,7 +113,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      */
     public function customModuleSupportUrl(): string
     {
-        return 'https://vytux.com/main/contact-us/';
+        return 'https://github.com/vytux-com/vytux_cousins/';
     }
 
     /**
@@ -220,7 +220,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
         } else {
             $pedi = '';
         }
-        
+
         if ($pedi !== '' && $pedi !== PedigreeLinkageType::VALUE_BIRTH) {
             $pedigree  = Registry::elementFactory()->make('INDI:FAMC:PEDI')->value($pedi, $individual->tree());
         } else {
