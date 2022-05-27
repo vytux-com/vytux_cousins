@@ -332,6 +332,9 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             case 'de':
                 return $this->germanTranslations();
 
+            case 'ru':
+                return $this->russianTranslations();
+
             default:
                 return [];
         }
@@ -534,6 +537,25 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
                 . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s má %1$d bratrance'
                 . I18N::PLURAL . '%2$s má %1$d bratrance'
                 . I18N::PLURAL . '%2$s má %1$d bratranců',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function russianTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => '🇺🇦 Двоюродные братья и сёстры 🇺🇦',
+            'A tab showing cousins of an individual.' => 'Вкладка с двоюродными братьями и сёстрами человека.',
+            'No family available' => 'Нет доступных семей',
+            'Father\'s family (%s)' => 'По отцу (%s)',
+            'Mother\'s family (%s)' => 'По матери (%s)',
+            '%2$s has %1$d first cousin recorded' 
+                . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s имеет %1$d двоюродного брата или сестру записанным' 
+                . I18N::PLURAL . '%2$s имеет %1$d двоюродных братьев или сестёр записанными' 
+                . I18N::PLURAL . '%2$s имеет %1$d двоюродных братьев или сестёр записанными',
         ];
     }
 };
