@@ -334,6 +334,12 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
 
             case 'ru':
                 return $this->russianTranslations();
+                                     
+            case 'zh-Hans':
+                return $this->hansTranslations();
+                
+            case 'zh-Hant':
+                return $this->hantTranslations();
 
             default:
                 return [];
@@ -556,6 +562,39 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
                 . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s имеет %1$d двоюродного брата или сестру записанным' 
                 . I18N::PLURAL . '%2$s имеет %1$d двоюродных братьев или сестёр записанными' 
                 . I18N::PLURAL . '%2$s имеет %1$d двоюродных братьев или сестёр записанными',
+        ];
+    }
+    
+    /**
+     * @return array
+     */
+    protected function hansTranslations() : array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => '表亲',
+            'A tab showing cousins of an individual.' => '显示个人表亲的标签。',
+            'No family available' => '没有堂表亲记录',
+            'Father\'s family (%s)' => '父亲的家庭 (%s)',
+            'Mother\'s family (%s)' => '母亲的家庭 (%s)',
+            '%2$s has %1$d first cousin recorded'
+                . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s有%1$d个第一代堂表亲',
+        ];
+    }
+	 /**
+     * @return array
+     */
+    protected function hantTranslations() : array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => '表親',
+            'A tab showing cousins of an individual.' => '显示个人堂表親的标签。',
+            'No family available' => '没有堂表親记录',
+            'Father\'s family (%s)' => '父親的家庭 (%s)',
+            'Mother\'s family (%s)' => '母親的家庭 (%s)',
+            '%2$s has %1$d first cousin recorded'
+                . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s 有 %1$d 個第一代堂表親',
         ];
     }
 };
