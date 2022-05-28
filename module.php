@@ -498,14 +498,14 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     {
         // Note the special characters used in plural and context-sensitive translations.
         return [
-            'Cousins' => 'Neven en Nichten',
-            'A tab showing cousins of an individual.' => 'Tab laat neven en nichten van deze persoon zien.',
+            'Cousins' => 'Neven en nichten',
+            'A tab showing cousins of an individual.' => 'Tab laat volle neven en nichten van deze persoon zien.',
             'No family available' => 'Geen familie gevonden',
             'Father\'s family (%s)' => 'Vader\'s familie (%s)',
             'Mother\'s family (%s)' => 'Moeder\'s familie (%s)',
             '%2$s has %1$d first cousin recorded'
-                . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s heeft %1$d neef of nicht in de eerste lijn'
-                . I18N::PLURAL . '%2$s heeft %1$d neven en nichten in de eerste lijn',
+                . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s heeft %1$d volle neef of nicht'
+                . I18N::PLURAL . '%2$s heeft %1$d volle neven en nichten',
         ];
     }
 
