@@ -396,8 +396,8 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             'Father\'s family (%s)' => 'Fars familie (%s)',
             'Mother\'s family (%s)' => 'Mors familie (%s)',
             '%2$s has %1$d first cousin recorded'
-                . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s har %1$d registreret fæter eller kusin'
-                . I18N::PLURAL . '%2$s har %1$d registrerede fæter eller kusiner',
+                . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s har %1$d registreret fætter eller kusine'
+                . I18N::PLURAL . '%2$s har %1$d registrerede fætre eller kusiner',
         ];
     }
 
