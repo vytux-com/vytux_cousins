@@ -27,7 +27,7 @@ The readme contains the following main sections:
 
 ## Requirements
 
-This module requires **webtrees** version 2.2 or later and PHP 8.2 or later.
+This module requires **webtrees** version 2.2 or later and PHP 8.3 or later.
 
 <a name="Installation"></a>
 
@@ -37,7 +37,7 @@ This module requires **webtrees** version 2.2 or later and PHP 8.2 or later.
 
 From your webtrees root folder:
 
-    composer require vytux/vytux-cousins
+    composer require vytux/vytux_cousins
 
 The module is installed into `modules_v4/vytux_cousins`.
 
@@ -55,7 +55,7 @@ The module is installed into `modules_v4/vytux_cousins`.
 
 ## Upgrade
 
-With Composer run `composer update vytux/vytux-cousins`. Otherwise replace the vytux_cousins files with the new ones from the latest download.
+With Composer run `composer update vytux/vytux_cousins`. Otherwise replace the vytux_cousins files with the new ones from the latest download.
 
 <a name="Support"></a>
 
