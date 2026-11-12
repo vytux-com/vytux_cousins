@@ -1,0 +1,27 @@
+{
+    "name": "vytux/vytux_cousins",
+    "description": "A webtrees custom module that adds a Cousins tab to the individual page.",
+    "type": "webtrees-module",
+    "license": "GPL-2.0-or-later",
+    "keywords": ["webtrees", "webtrees-module", "genealogy", "cousins"],
+    "homepage": "https://github.com/vytux-com/vytux_cousins",
+    "authors": [
+        {
+            "name": "Vytautas Krivickas",
+            "homepage": "https://vytux.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/vytux-com/vytux_cousins/issues",
+        "source": "https://github.com/vytux-com/vytux_cousins"
+    },
+    "require": {
+        "php": ">=8.3",
+        "magicsunday/webtrees-module-installer-plugin": "^2.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "magicsunday/webtrees-module-installer-plugin": true
+        }
+    }
+}

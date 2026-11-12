@@ -27,16 +27,27 @@ The readme contains the following main sections:
 
 ## Requirements
 
-This module requires **webtrees** version 1.5.2 or later.
+This module requires **webtrees** version 2.2 or later and PHP 8.3 or later.
 
 <a name="Installation"></a>
 
 ## Installation
 
-This section documents installation instructions for vytux_cousins.
+### With Composer (recommended)
 
-1.  Unzip the files and upload them to the **webtrees** /modules_v<font color="red">X</font>/ folder on your web server. (Note: "<font color="red">X</font>" = "3" for webtrees versions 1.5 up to 2.0. webtrees 2.0 will be "4" at the time of writing this, but may change in future releases)
-2.  Login to **webtrees** as administrator, go to <span class="pointer">Administration --> Modules</span>, and find the module. It will be called "Cousins". Check it has a tick for "Enabled"
+From your webtrees root folder:
+
+    composer require vytux/vytux_cousins
+
+The module is installed into `modules_v4/vytux_cousins`.
+
+### Manually
+
+1.  Unzip the files and upload them to the **webtrees** `modules_v4/vytux_cousins/` folder on your web server.
+
+### Then
+
+2.    Login to **webtrees** as administrator, go to <span class="pointer">Administration --> Modules</span>, and find the module. It will be called "Cousins". Check it has a tick for "Enabled"
 3.  Next go to the "Tabs" menu. Set the access level and position for the menu item to suit your preference. It will probably have defaulted to "Show only to managers".
 4.  Finally click SAVE, to complete the installation.
 
@@ -44,7 +55,7 @@ This section documents installation instructions for vytux_cousins.
 
 ## Upgrade
 
-To update simply replace the vytux_cousins files with the new ones from the latest download.
+With Composer run `composer update vytux/vytux_cousins`. Otherwise replace the vytux_cousins files with the new ones from the latest download.
 
 <a name="Support"></a>
 
