@@ -39,6 +39,8 @@ use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Elements\PedigreeLinkageType;
 use Fisharebest\Webtrees\Contracts\UserInterface;
 use Fisharebest\Webtrees\Module\AbstractModule;
+use Fisharebest\Webtrees\Session;
+use Fisharebest\Webtrees\Validator;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use Fisharebest\Webtrees\Module\ModuleCustomTrait;
 use Fisharebest\Webtrees\Module\ModuleTabInterface;
@@ -47,6 +49,7 @@ use Fisharebest\Webtrees\Tree;
 use Fisharebest\Webtrees\View;
 use Fisharebest\Localization\Translation;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * vytux_cousins module
@@ -93,7 +96,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      */
     public function customModuleVersion(): string
     {
-        return '2.2.0';
+        return '2.2.1';
     }
 
     /**
@@ -160,39 +163,167 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
         $cousinsObj->allCousinCount = 0;
         $cousinsObj->fatherCousins = [];
         $cousinsObj->motherCousins = [];
+        $cousinsObj->fatherTypes = [];
+        $cousinsObj->motherTypes = [];
+        $cousinsObj->options = [];
+        foreach ($this->cousinTypes() as $key => $type) {
+            if ($type['optional']) {
+                $cousinsObj->options[$key] = ['label' => $type['label'], 'enabled' => $this->isTypeEnabled($key)];
+            }
+        }
+        $cousinsObj->showTypeLabels = count($this->enabledCousinTypes()) > 1;
         if ($individual->childFamilies()->first()) {
             $cousinsObj->father = $individual->childFamilies()->first()->husband();
-            if (($cousinsObj->father) && ($cousinsObj->father->childFamilies()->first())) {
-                foreach ($cousinsObj->father->childFamilies()->first()->children() as $sibling) {
-                    if ($sibling !== $cousinsObj->father) {
-                        foreach ($sibling->spouseFamilies() as $fam) {
-                            foreach ($fam->children() as $child) {
-                                $cousinsObj->fatherCousins[] = $child;
-                                $cousinsObj->fathersCousinCount++;
-                            }
-                        }
-                    }
-                }
-            }
-
             $cousinsObj->mother = $individual->childFamilies()->first()->wife();
-            if (($cousinsObj->mother) && ($cousinsObj->mother->childFamilies()->first())) {
-                foreach ($cousinsObj->mother->childFamilies()->first()->children() as $sibling) {
-                    if ($sibling !== $cousinsObj->mother) {
-                        foreach ($sibling->spouseFamilies() as $fam) {
-                            foreach ($fam->children() as $child) {
-                                $cousinsObj->motherCousins[] = $child;
-                                $cousinsObj->mothersCousinCount++;
-                            }
-                        }
-                    }
-                }
-            }
 
-            $cousinsObj->allCousinCount = sizeof(array_unique(array_merge($cousinsObj->fatherCousins, $cousinsObj->motherCousins)));
+            $cousinsObj->fatherCousins = $this->cousinsViaParent($cousinsObj->father, $cousinsObj->fatherTypes);
+            $cousinsObj->motherCousins = $this->cousinsViaParent($cousinsObj->mother, $cousinsObj->motherTypes);
+            $cousinsObj->fathersCousinCount = count($cousinsObj->fatherCousins);
+            $cousinsObj->mothersCousinCount = count($cousinsObj->motherCousins);
+
+            // A cousin related through both parents is listed on both sides but counted once overall.
+            $cousinsObj->allCousinCount = count($cousinsObj->fatherTypes + $cousinsObj->motherTypes);
         }
 
         return $cousinsObj;
+    }
+
+    /**
+     * Cousin types. To add a new type (e.g. second cousins), add an entry here:
+     * 'siblings' returns the relatives of a parent whose children count as cousins of this type.
+     * Types with 'optional' => true get a check-box on the tab; the choice is kept in the session.
+     *
+     * @return array<string,array{label:string,optional:bool,siblings:callable}>
+     */
+    private function cousinTypes(): array
+    {
+        return [
+            'first' => [
+                'label'    => I18N::translate('First cousins'),
+                'optional' => false,
+                'siblings' => fn (Individual $parent): array => $this->fullSiblings($parent),
+            ],
+            'half'  => [
+                'label'    => I18N::translate('Include half cousins'),
+                'optional' => true,
+                'siblings' => fn (Individual $parent): array => $this->halfSiblings($parent),
+            ],
+        ];
+    }
+
+    private function isTypeEnabled(string $key): bool
+    {
+        $type = $this->cousinTypes()[$key];
+
+        return !$type['optional'] || Session::get('vytux_cousins_include_' . $key) === '1';
+    }
+
+    /**
+     * @return array<string,array{label:string,optional:bool,siblings:callable}>
+     */
+    private function enabledCousinTypes(): array
+    {
+        return array_filter($this->cousinTypes(), fn (string $key): bool => $this->isTypeEnabled($key), ARRAY_FILTER_USE_KEY);
+    }
+
+    /**
+     * Saves the check-box choices and returns the refreshed tab content.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return ResponseInterface
+     */
+    public function getCousinsAction(ServerRequestInterface $request): ResponseInterface
+    {
+        $query = $request->getQueryParams();
+        $tree  = Validator::attributes($request)->tree();
+
+        $individual = Registry::individualFactory()->make((string) ($query['xref'] ?? ''), $tree);
+        $individual = Auth::checkIndividualAccess($individual);
+
+        foreach ($this->cousinTypes() as $key => $type) {
+            if ($type['optional'] && isset($query['include_' . $key])) {
+                Session::put('vytux_cousins_include_' . $key, $query['include_' . $key] === '1' ? '1' : '0');
+            }
+        }
+
+        return response($this->getTabContent($individual));
+    }
+
+    /**
+     * @param Individual|null       $parent
+     * @param array<string,string>  $types  xref => type key; filled with the cousins found via this parent (first type wins)
+     *
+     * @return array<Individual>
+     */
+    private function cousinsViaParent(?Individual $parent, array &$types): array
+    {
+        $cousins = [];
+
+        if ($parent === null) {
+            return $cousins;
+        }
+
+        foreach ($this->enabledCousinTypes() as $key => $type) {
+            foreach ($type['siblings']($parent) as $sibling) {
+                foreach ($sibling->spouseFamilies() as $fam) {
+                    foreach ($fam->children() as $child) {
+                        if (!isset($cousins[$child->xref()])) {
+                            $cousins[$child->xref()] = $child;
+                            $types[$child->xref()] ??= $key;
+                        }
+                    }
+                }
+            }
+        }
+
+        return array_values($cousins);
+    }
+
+    /**
+     * @return array<Individual>
+     */
+    private function fullSiblings(Individual $parent): array
+    {
+        $family = $parent->childFamilies()->first();
+
+        if ($family === null) {
+            return [];
+        }
+
+        return $family->children()->filter(fn (Individual $i): bool => $i !== $parent)->all();
+    }
+
+    /**
+     * Children of the parent's other marriages, sharing only one parent.
+     *
+     * @return array<Individual>
+     */
+    private function halfSiblings(Individual $parent): array
+    {
+        $family = $parent->childFamilies()->first();
+
+        if ($family === null) {
+            return [];
+        }
+
+        $full = array_map(fn (Individual $i): string => $i->xref(), $this->fullSiblings($parent));
+        $half = [];
+
+        foreach ($family->spouses() as $grandparent) {
+            foreach ($grandparent->spouseFamilies() as $other) {
+                if ($other === $family) {
+                    continue;
+                }
+                foreach ($other->children() as $child) {
+                    if ($child !== $parent && !in_array($child->xref(), $full, true)) {
+                        $half[$child->xref()] = $child;
+                    }
+                }
+            }
+        }
+
+        return array_values($half);
     }
 
     /**
@@ -251,6 +382,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
                 'cousins_obj'   => $this->getCousins($individual),
                 'cousins_css'   => route('module', ['module' => $this->name(), 'action' => 'Css']),
                 'module_obj'    => $this,
+                'tab_url'       => route('module', ['module' => $this->name(), 'action' => 'Cousins', 'tree' => $individual->tree()->name(), 'xref' => $individual->xref()]),
             ]
         );
     }
@@ -362,6 +494,12 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
                 . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s turi %1$d įrašyta pirmos eilės pusbrolį/pusseserę'
                 . I18N::PLURAL . '%2$s turi %1$d įrašytus pirmos eilės pusbrolius/pusseseres'
                 . I18N::PLURAL . '%2$s turi %1$d įrašytų pirmos eilės pusbrolių/pusseserių',
+            'Include half cousins' => 'Įtraukti pusbrolius/pusseseres per vieną bendrą senelį',
+            'half cousin' => 'pusbrolis/pusseserė per vieną bendrą senelį',
+            '%2$s has %1$d cousin recorded'
+                . I18N::PLURAL . '%2$s has %1$d cousins recorded' => '%2$s turi %1$d įrašytą pusbrolį/pusseserę'
+                . I18N::PLURAL . '%2$s turi %1$d įrašytus pusbrolius/pusseseres'
+                . I18N::PLURAL . '%2$s turi %1$d įrašytų pusbrolių/pusseserių',
         ];
     }
 

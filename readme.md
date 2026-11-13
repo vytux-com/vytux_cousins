@@ -1,35 +1,25 @@
-# vytux_cousins Readme
+# vytux_cousins
 
-Released: November 2013
+[![CI](https://github.com/vytux-com/vytux_cousins/actions/workflows/ci.yml/badge.svg)](https://github.com/vytux-com/vytux_cousins/actions/workflows/ci.yml)
+[![Packagist](https://img.shields.io/packagist/v/vytux/vytux_cousins)](https://packagist.org/packages/vytux/vytux_cousins)
+[![License: GPL v2+](https://img.shields.io/badge/license-GPL--2.0--or--later-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 
-<a name="Description"></a>
+A [webtrees](https://www.webtrees.net) custom module that adds a **Cousins** tab to the individual page, listing the cousins of the person you are viewing.
 
-## Description
+Originally based on the `simpl_cousins` module by Nigel Osborne (kiwtrees.net), ported to webtrees by Vytautas Krivickas ([vytux.com](https://vytux.com)).
 
-After the decision of the original author of the simpl_cousins author to not support webtrees version 1.5 I have ported some of these modules to this version of webtrees.
+## Features
 
-This module creates an additional tab in Individual view which list all of the first cousins of that person.
-
-<a name="Contents"></a>
-
-## Contents
-
-The readme contains the following main sections:
-
-*   [Description](#Description)
-*   [Contents](#Contents)
-*   [Requirements](#Require)
-*   [Installation](#Installation)
-*   [Upgrade](#upgrade)
-*   [Contact Support](#Support)
-
-<a name="Require"></a>
+- Lists first cousins, grouped by their parents' family, split into **Father's family** and **Mother's family**.
+- Optional **half cousins**: children of a parent's half-siblings (that is, cousins who share only one grandparent). Tick *Include half cousins* at the top of the tab. Half cousins are labelled in the list, and the choice is remembered for your browser session.
+- A cousin related through both parents is listed and counted on both sides, but only once in the overall total.
+- Respects webtrees privacy settings.
+- Translated into Czech, Chinese (Simplified and Traditional), Danish, Dutch, Finnish, French, German, Hebrew, Lithuanian, Norwegian (Bokmål and Nynorsk), Russian and Swedish. Strings without a translation fall back to English.
 
 ## Requirements
 
-This module requires **webtrees** version 2.2 or later and PHP 8.3 or later.
-
-<a name="Installation"></a>
+- webtrees 2.2 or later
+- PHP 8.3 or later
 
 ## Installation
 
@@ -37,38 +27,40 @@ This module requires **webtrees** version 2.2 or later and PHP 8.3 or later.
 
 From your webtrees root folder:
 
-    composer require vytux/vytux_cousins
+```
+composer require vytux/vytux_cousins
+```
 
 The module is installed into `modules_v4/vytux_cousins`.
 
 ### Manually
 
-1.  Unzip the files and upload them to the **webtrees** `modules_v4/vytux_cousins/` folder on your web server.
+Download the latest release, unzip it and upload the folder to `modules_v4/vytux_cousins/` on your web server.
 
-### Then
+### Enable the tab
 
-2.    Login to **webtrees** as administrator, go to <span class="pointer">Administration --> Modules</span>, and find the module. It will be called "Cousins". Check it has a tick for "Enabled"
-3.  Next go to the "Tabs" menu. Set the access level and position for the menu item to suit your preference. It will probably have defaulted to "Show only to managers".
-4.  Finally click SAVE, to complete the installation.
+1. Sign in to webtrees as an administrator and go to **Control panel → Modules → All modules**. Find **Cousins** and make sure it is enabled.
+2. Go to **Control panel → Modules → Tabs**. Set the access level and position for the Cousins tab. By default it may be shown to managers only.
+3. Click **Save**.
 
-<a name="upgrade"></a>
+## Upgrading
 
-## Upgrade
+With Composer run `composer update vytux/vytux_cousins`. Otherwise replace the module folder with the files from the latest release.
 
-With Composer run `composer update vytux/vytux_cousins`. Otherwise replace the vytux_cousins files with the new ones from the latest download.
+## Adding more cousin types
 
-<a name="Support"></a>
+Cousin types are defined in `cousinTypes()` in `src/VytuxCousinsTabModule.php`. Each type describes which relatives of a parent count as the starting point. Types marked `optional` automatically get a check-box on the tab. This makes it straightforward to add further types, for example second cousins.
 
-## Contact Support
+## Translations
 
-You can contact our support staff by one of the following:
+Translations live in `src/VytuxCousinsTabModule.php`, one method per language. Pull requests adding or improving a language are welcome.
 
-<span style="font-weight: bold;">Email: </span>for vytux addon support please contact me via [webtrees [at] vytux.com](mailto:webtrees@vytux.com)
+## Support
 
-<span style="font-weight: bold;">Forum: </span>general webtrees support can be found at the [webtrees forum](http://www.webtrees.net/index.php/en/forum/index-en)
+Please report bugs and request features on the [issue tracker](https://github.com/vytux-com/vytux_cousins/issues). You can also email [webtrees@vytux.com](mailto:webtrees@vytux.com), or ask general webtrees questions on the [webtrees forum](https://www.webtrees.net/index.php/forum).
 
-* * *
+## Licence
 
-### **Copyright**
+Copyright © 2013 Vytautas Krivickas and vytux.com. Based on simpl_cousins, copyright © 2013 Nigel Osborne and kiwtrees.net.
 
-© 2013 Vytautas Krivickas and vytux.com
+Released under the GNU General Public License, version 2 or (at your option) any later version. See the licence header in the source files.
