@@ -39,7 +39,12 @@ use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Elements\PedigreeLinkageType;
 use Fisharebest\Webtrees\Contracts\UserInterface;
 use Fisharebest\Webtrees\Module\AbstractModule;
+use Fisharebest\Webtrees\FlashMessages;
+use Fisharebest\Webtrees\Http\ViewResponseTrait;
+use Fisharebest\Webtrees\Module\ModuleConfigInterface;
+use Fisharebest\Webtrees\Module\ModuleConfigTrait;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Fisharebest\Webtrees\Module\ModuleCustomTrait;
 use Fisharebest\Webtrees\Module\ModuleTabInterface;
 use Fisharebest\Webtrees\Module\ModuleTabTrait;
@@ -51,9 +56,11 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * vytux_cousins module
  */
-class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface, ModuleCustomInterface
+class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface, ModuleCustomInterface, ModuleConfigInterface
 {
+    use ModuleConfigTrait;
     use ModuleCustomTrait;
+    use ViewResponseTrait;
     use ModuleTabTrait;
 
     /**
@@ -160,39 +167,166 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
         $cousinsObj->allCousinCount = 0;
         $cousinsObj->fatherCousins = [];
         $cousinsObj->motherCousins = [];
+        $cousinsObj->types = [];
+        $cousinsObj->showTypeLabels = count($this->enabledCousinTypes()) > 1;
         if ($individual->childFamilies()->first()) {
             $cousinsObj->father = $individual->childFamilies()->first()->husband();
-            if (($cousinsObj->father) && ($cousinsObj->father->childFamilies()->first())) {
-                foreach ($cousinsObj->father->childFamilies()->first()->children() as $sibling) {
-                    if ($sibling !== $cousinsObj->father) {
-                        foreach ($sibling->spouseFamilies() as $fam) {
-                            foreach ($fam->children() as $child) {
-                                $cousinsObj->fatherCousins[] = $child;
-                                $cousinsObj->fathersCousinCount++;
-                            }
-                        }
-                    }
-                }
-            }
-
             $cousinsObj->mother = $individual->childFamilies()->first()->wife();
-            if (($cousinsObj->mother) && ($cousinsObj->mother->childFamilies()->first())) {
-                foreach ($cousinsObj->mother->childFamilies()->first()->children() as $sibling) {
-                    if ($sibling !== $cousinsObj->mother) {
-                        foreach ($sibling->spouseFamilies() as $fam) {
-                            foreach ($fam->children() as $child) {
-                                $cousinsObj->motherCousins[] = $child;
-                                $cousinsObj->mothersCousinCount++;
-                            }
-                        }
-                    }
-                }
-            }
 
-            $cousinsObj->allCousinCount = sizeof(array_unique(array_merge($cousinsObj->fatherCousins, $cousinsObj->motherCousins)));
+            $cousinsObj->fatherCousins = $this->cousinsViaParent($cousinsObj->father, $cousinsObj->types);
+            $cousinsObj->motherCousins = $this->cousinsViaParent($cousinsObj->mother, $cousinsObj->types);
+            $cousinsObj->fathersCousinCount = count($cousinsObj->fatherCousins);
+            $cousinsObj->mothersCousinCount = count($cousinsObj->motherCousins);
+
+            // A cousin related through both parents is listed on both sides but counted once overall.
+            $cousinsObj->allCousinCount = count($cousinsObj->types);
         }
 
         return $cousinsObj;
+    }
+
+    /**
+     * Cousin types. To add a new type (e.g. second cousins), add an entry here:
+     * 'siblings' returns the relatives of a parent whose children count as cousins of this type.
+     * Optional types get an on/off check-box in the module settings, stored as the 'preference'.
+     *
+     * @return array<string,array{label:string,preference:?string,siblings:callable}>
+     */
+    private function cousinTypes(): array
+    {
+        return [
+            'first' => [
+                'label'      => I18N::translate('First cousins'),
+                'preference' => null,
+                'siblings'   => fn (Individual $parent): array => $this->fullSiblings($parent),
+            ],
+            'half'  => [
+                'label'      => I18N::translate('Include half cousins (children of half-siblings of a parent)'),
+                'preference' => 'include_half_cousins',
+                'siblings'   => fn (Individual $parent): array => $this->halfSiblings($parent),
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string,array{label:string,preference:?string,siblings:callable}>
+     */
+    private function enabledCousinTypes(): array
+    {
+        return array_filter(
+            $this->cousinTypes(),
+            fn (array $type): bool => $type['preference'] === null || $this->getPreference($type['preference']) === '1'
+        );
+    }
+
+    /**
+     * @param Individual|null       $parent
+     * @param array<string,string>  $types  xref => type key; filled with every cousin found (first type wins)
+     *
+     * @return array<Individual>
+     */
+    private function cousinsViaParent(?Individual $parent, array &$types): array
+    {
+        $cousins = [];
+
+        if ($parent === null) {
+            return $cousins;
+        }
+
+        foreach ($this->enabledCousinTypes() as $key => $type) {
+            foreach ($type['siblings']($parent) as $sibling) {
+                foreach ($sibling->spouseFamilies() as $fam) {
+                    foreach ($fam->children() as $child) {
+                        if (!isset($cousins[$child->xref()])) {
+                            $cousins[$child->xref()] = $child;
+                            $types[$child->xref()] ??= $key;
+                        }
+                    }
+                }
+            }
+        }
+
+        return array_values($cousins);
+    }
+
+    /**
+     * @return array<Individual>
+     */
+    private function fullSiblings(Individual $parent): array
+    {
+        $family = $parent->childFamilies()->first();
+
+        if ($family === null) {
+            return [];
+        }
+
+        return $family->children()->filter(fn (Individual $i): bool => $i !== $parent)->all();
+    }
+
+    /**
+     * Children of the parent's other marriages, sharing only one parent.
+     *
+     * @return array<Individual>
+     */
+    private function halfSiblings(Individual $parent): array
+    {
+        $family = $parent->childFamilies()->first();
+
+        if ($family === null) {
+            return [];
+        }
+
+        $full = array_map(fn (Individual $i): string => $i->xref(), $this->fullSiblings($parent));
+        $half = [];
+
+        foreach ($family->spouses() as $grandparent) {
+            foreach ($grandparent->spouseFamilies() as $other) {
+                if ($other === $family) {
+                    continue;
+                }
+                foreach ($other->children() as $child) {
+                    if ($child !== $parent && !in_array($child->xref(), $full, true)) {
+                        $half[$child->xref()] = $child;
+                    }
+                }
+            }
+        }
+
+        return array_values($half);
+    }
+
+    /**
+     * @return ResponseInterface
+     */
+    public function getAdminAction(): ResponseInterface
+    {
+        $this->layout = 'layouts/administration';
+
+        return $this->viewResponse($this->name() . '::admin', [
+            'title'  => $this->title(),
+            'module' => $this,
+            'types'  => array_filter($this->cousinTypes(), fn (array $t): bool => $t['preference'] !== null),
+        ]);
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     *
+     * @return ResponseInterface
+     */
+    public function postAdminAction(ServerRequestInterface $request): ResponseInterface
+    {
+        $params = (array) $request->getParsedBody();
+
+        foreach ($this->cousinTypes() as $type) {
+            if ($type['preference'] !== null) {
+                $this->setPreference($type['preference'], isset($params[$type['preference']]) ? '1' : '0');
+            }
+        }
+
+        FlashMessages::addMessage(I18N::translate('The preferences for the module “%s” have been updated.', $this->title()), 'success');
+
+        return redirect($this->getConfigLink());
     }
 
     /**

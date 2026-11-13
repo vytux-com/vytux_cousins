@@ -1,0 +1,16 @@
+<?php use Fisharebest\Webtrees\I18N; ?>
+
+<h1><?= $title ?></h1>
+
+<form method="post" action="<?= e(route('module', ['module' => $module->name(), 'action' => 'Admin'])) ?>">
+    <?= csrf_field() ?>
+
+    <?php foreach ($types as $type) : ?>
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="<?= e($type['preference']) ?>" name="<?= e($type['preference']) ?>" value="1" <?= $module->getPreference($type['preference']) === '1' ? 'checked' : '' ?>>
+            <label class="form-check-label" for="<?= e($type['preference']) ?>"><?= e($type['label']) ?></label>
+        </div>
+    <?php endforeach ?>
+
+    <button type="submit" class="btn btn-primary"><?= I18N::translate('save') ?></button>
+</form>

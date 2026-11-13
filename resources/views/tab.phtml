@@ -5,7 +5,7 @@
 <div class="wt-tab-vytux-cousins py-4">
     <?php if ($cousins_obj->self->childFamilies()->first()): ?>
     <?php $prev_fam_id = '-1'; ?>
-	    <h3><?= I18N::plural('%2$s has %1$d first cousin recorded', '%2$s has %1$d first cousins recorded', $cousins_obj->allCousinCount, $cousins_obj->allCousinCount, $cousins_obj->self->fullName()) ?></h3>
+	    <h3><?php if ($cousins_obj->showTypeLabels): ?><?= I18N::plural('%2$s has %1$d cousin recorded', '%2$s has %1$d cousins recorded', $cousins_obj->allCousinCount, $cousins_obj->allCousinCount, $cousins_obj->self->fullName()) ?><?php else: ?><?= I18N::plural('%2$s has %1$d first cousin recorded', '%2$s has %1$d first cousins recorded', $cousins_obj->allCousinCount, $cousins_obj->allCousinCount, $cousins_obj->self->fullName()) ?><?php endif ?></h3>
         <div id="vytux_cousins_content">
             <div id="cousins_f">
                 <h4><?=I18N::translate('Father\'s family (%s)', $cousins_obj->fathersCousinCount)?></h4>
@@ -24,10 +24,12 @@
                         <?php endif ?>
                         <span class="cousins_lifespan" ><?= $cousin->lifespan() ?></span>
                         <span class="cousins_pedi"><?= $module_obj->getChildLabel($cousin) ?></span>
+                        <?php if ($cousins_obj->showTypeLabels && $cousins_obj->types[$cousin->xref()] === 'half'): ?><span class="cousins_pedi">(<?= I18N::translate('half cousin') ?>)</span><?php endif ?>
 			        </div>
                 <?php $i++; endforeach ?>
             </div>
             <div id="cousins_m">
+                <?php $prev_fam_id = '-1'; ?>
                 <h4><?=I18N::translate('Mother\'s family (%s)', $cousins_obj->mothersCousinCount)?></h4>
                 <?php  foreach ($cousins_obj->motherCousins as $cousin) : ?>
                     <?php if ($cousin->childFamilies()->first()->xref() != $prev_fam_id) : ?>
@@ -44,6 +46,7 @@
                         <?php endif ?>
                         <span class="cousins_lifespan" ><?= $cousin->lifespan() ?></span>
                         <span class="cousins_pedi"><?= $module_obj->getChildLabel($cousin) ?></span>
+                        <?php if ($cousins_obj->showTypeLabels && $cousins_obj->types[$cousin->xref()] === 'half'): ?><span class="cousins_pedi">(<?= I18N::translate('half cousin') ?>)</span><?php endif ?>
 			        </div>
                 <?php $i++; endforeach ?>
             </div>
