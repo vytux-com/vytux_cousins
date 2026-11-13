@@ -235,7 +235,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     public function getTabAction(ServerRequestInterface $request): ResponseInterface
     {
         $query = $request->getQueryParams();
-        $tree  = app(TreeService::class)->all()->get((string) ($query['tree'] ?? ''));
+        $tree  = Registry::container()->get(TreeService::class)->all()->get((string) ($query['tree'] ?? ''));
 
         if ($tree === null) {
             return response('', 404);
