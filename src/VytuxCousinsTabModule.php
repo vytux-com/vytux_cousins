@@ -40,7 +40,7 @@ use Fisharebest\Webtrees\Elements\PedigreeLinkageType;
 use Fisharebest\Webtrees\Contracts\UserInterface;
 use Fisharebest\Webtrees\Module\AbstractModule;
 use Fisharebest\Webtrees\Session;
-use Fisharebest\Webtrees\Services\TreeService;
+use Fisharebest\Webtrees\Validator;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use Fisharebest\Webtrees\Module\ModuleCustomTrait;
 use Fisharebest\Webtrees\Module\ModuleTabInterface;
@@ -235,11 +235,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     public function getCousinsAction(ServerRequestInterface $request): ResponseInterface
     {
         $query = $request->getQueryParams();
-        $tree  = Registry::container()->get(TreeService::class)->all()->first(fn (Tree $t): bool => $t->name() === ($query['tree'] ?? ''));
-
-        if ($tree === null) {
-            return response('', 404);
-        }
+        $tree  = Validator::attributes($request)->tree();
 
         $individual = Registry::individualFactory()->make((string) ($query['xref'] ?? ''), $tree);
         $individual = Auth::checkIndividualAccess($individual);
