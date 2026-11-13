@@ -608,6 +608,11 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             '%2$s has %1$d first cousin recorded'
                 . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s har %1$d registrert søskenbarn'
                 . I18N::PLURAL . '%2$s har %1$d registrerte søskenbarn',
+            'Include half cousins' => 'Inkluder halvsøskenbarn',
+            'half cousin' => 'halvsøskenbarn',
+			'%2$s has %1$d cousin recorded'
+			    . I18N::PLURAL . '%2$s has %1$d cousins recorded' => '%2$s har %1$d registrert søskenbarn'
+                . I18N::PLURAL . '%2$s har %1$d registrerte søskenbarn',
         ];
     }
 
@@ -625,6 +630,11 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             'Mother\'s family (%s)' => 'Mors familie (%s)',
             '%2$s has %1$d first cousin recorded'
                 . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s har %1$d registrert syskenbarn'
+                . I18N::PLURAL . '%2$s har %1$d registrerte syskenbarn',
+            'Include half cousins' => 'Inkluder halvsyskenbarn',
+            'half cousin' => 'halvsyskenbarn',
+			'%2$s has %1$d cousin recorded'
+			    . I18N::PLURAL . '%2$s has %1$d cousins recorded' => '%2$s har %1$d registrert syskenbarn'
                 . I18N::PLURAL . '%2$s har %1$d registrerte syskenbarn',
         ];
     }
