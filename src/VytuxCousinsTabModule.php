@@ -42,7 +42,6 @@ use Fisharebest\Webtrees\Module\AbstractModule;
 use Fisharebest\Webtrees\Session;
 use Fisharebest\Webtrees\Services\TreeService;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Fisharebest\Webtrees\Module\ModuleCustomTrait;
 use Fisharebest\Webtrees\Module\ModuleTabInterface;
 use Fisharebest\Webtrees\Module\ModuleTabTrait;
