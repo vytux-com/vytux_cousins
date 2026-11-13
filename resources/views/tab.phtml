@@ -2,7 +2,13 @@
 <?php use Fisharebest\Webtrees\I18N; ?>
 <?php use Fisharebest\Webtrees\View; ?>
 
-<div class="wt-tab-vytux-cousins py-4">
+<div class="wt-tab-vytux-cousins py-4" data-vytux-cousins-url="<?= e($tab_url) ?>">
+    <?php foreach ($cousins_obj->options as $key => $option): ?>
+        <div class="form-check mb-3">
+            <input class="form-check-input vytux-cousins-option" type="checkbox" id="vytux_cousins_include_<?= e($key) ?>" data-option="<?= e($key) ?>" <?= $option['enabled'] ? 'checked' : '' ?>>
+            <label class="form-check-label" for="vytux_cousins_include_<?= e($key) ?>"><?= e($option['label']) ?></label>
+        </div>
+    <?php endforeach ?>
     <?php if ($cousins_obj->self->childFamilies()->first()): ?>
     <?php $prev_fam_id = '-1'; ?>
 	    <h3><?php if ($cousins_obj->showTypeLabels): ?><?= I18N::plural('%2$s has %1$d cousin recorded', '%2$s has %1$d cousins recorded', $cousins_obj->allCousinCount, $cousins_obj->allCousinCount, $cousins_obj->self->fullName()) ?><?php else: ?><?= I18N::plural('%2$s has %1$d first cousin recorded', '%2$s has %1$d first cousins recorded', $cousins_obj->allCousinCount, $cousins_obj->allCousinCount, $cousins_obj->self->fullName()) ?><?php endif ?></h3>
@@ -58,6 +64,22 @@
 
 <?php View::push('javascript') ?>
 <script>
+  if (!window.vytuxCousinsInit) {
+    window.vytuxCousinsInit = true;
+    document.addEventListener("change", function (event) {
+      var box = event.target;
+      if (!box.classList || !box.classList.contains("vytux-cousins-option")) { return; }
+      var tab = box.closest(".wt-tab-vytux-cousins");
+      var url = new URL(tab.dataset.vytuxCousinsUrl, window.location.href);
+      tab.querySelectorAll(".vytux-cousins-option").forEach(function (o) {
+        url.searchParams.set("include_" + o.dataset.option, o.checked ? "1" : "0");
+      });
+      fetch(url).then(function (r) { return r.text(); }).then(function (html) {
+        tab.outerHTML = html;
+      });
+    });
+  }
+</script><script>
   var newSheet=document.createElement("link");
   newSheet.setAttribute("rel","stylesheet");
   newSheet.setAttribute("type","text/css");

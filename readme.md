@@ -10,7 +10,7 @@ After the decision of the original author of the simpl_cousins author to not sup
 
 This module creates an additional tab in Individual view which list all of the first cousins of that person.
 
-Half cousins (children of a parent's half-siblings) can be included by ticking the option in the module's settings (Administration --> Modules --> Cousins --> Preferences). A cousin related through both parents is listed and counted on both sides, but only once in the total.
+Half cousins (children of a parent's half-siblings) can be included by ticking the *Include half cousins* check-box at the top of the Cousins tab (the choice is remembered for your session). A cousin related through both parents is listed and counted on both sides, but only once in the total.
 <a name="Contents"></a>
 
 ## Contents
