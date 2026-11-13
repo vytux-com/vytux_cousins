@@ -232,10 +232,10 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      *
      * @return ResponseInterface
      */
-    public function getTabAction(ServerRequestInterface $request): ResponseInterface
+    public function getCousinsAction(ServerRequestInterface $request): ResponseInterface
     {
         $query = $request->getQueryParams();
-        $tree  = Registry::container()->get(TreeService::class)->all()->get((string) ($query['tree'] ?? ''));
+        $tree  = Registry::container()->get(TreeService::class)->all()->first(fn (Tree $t): bool => $t->name() === ($query['tree'] ?? ''));
 
         if ($tree === null) {
             return response('', 404);
@@ -385,7 +385,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
                 'cousins_obj'   => $this->getCousins($individual),
                 'cousins_css'   => route('module', ['module' => $this->name(), 'action' => 'Css']),
                 'module_obj'    => $this,
-                'tab_url'       => route('module', ['module' => $this->name(), 'action' => 'Tab', 'tree' => $individual->tree()->name(), 'xref' => $individual->xref()]),
+                'tab_url'       => route('module', ['module' => $this->name(), 'action' => 'Cousins', 'tree' => $individual->tree()->name(), 'xref' => $individual->xref()]),
             ]
         );
     }
