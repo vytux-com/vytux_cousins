@@ -163,7 +163,8 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
         $cousinsObj->allCousinCount = 0;
         $cousinsObj->fatherCousins = [];
         $cousinsObj->motherCousins = [];
-        $cousinsObj->types = [];
+        $cousinsObj->fatherTypes = [];
+        $cousinsObj->motherTypes = [];
         $cousinsObj->options = [];
         foreach ($this->cousinTypes() as $key => $type) {
             if ($type['optional']) {
@@ -175,13 +176,13 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             $cousinsObj->father = $individual->childFamilies()->first()->husband();
             $cousinsObj->mother = $individual->childFamilies()->first()->wife();
 
-            $cousinsObj->fatherCousins = $this->cousinsViaParent($cousinsObj->father, $cousinsObj->types);
-            $cousinsObj->motherCousins = $this->cousinsViaParent($cousinsObj->mother, $cousinsObj->types);
+            $cousinsObj->fatherCousins = $this->cousinsViaParent($cousinsObj->father, $cousinsObj->fatherTypes);
+            $cousinsObj->motherCousins = $this->cousinsViaParent($cousinsObj->mother, $cousinsObj->motherTypes);
             $cousinsObj->fathersCousinCount = count($cousinsObj->fatherCousins);
             $cousinsObj->mothersCousinCount = count($cousinsObj->motherCousins);
 
             // A cousin related through both parents is listed on both sides but counted once overall.
-            $cousinsObj->allCousinCount = count($cousinsObj->types);
+            $cousinsObj->allCousinCount = count($cousinsObj->fatherTypes + $cousinsObj->motherTypes);
         }
 
         return $cousinsObj;
@@ -251,7 +252,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
 
     /**
      * @param Individual|null       $parent
-     * @param array<string,string>  $types  xref => type key; filled with every cousin found (first type wins)
+     * @param array<string,string>  $types  xref => type key; filled with the cousins found via this parent (first type wins)
      *
      * @return array<Individual>
      */

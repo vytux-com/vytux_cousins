@@ -30,7 +30,7 @@
                         <?php endif ?>
                         <span class="cousins_lifespan" ><?= $cousin->lifespan() ?></span>
                         <span class="cousins_pedi"><?= $module_obj->getChildLabel($cousin) ?></span>
-                        <?php if ($cousins_obj->showTypeLabels && $cousins_obj->types[$cousin->xref()] === 'half'): ?><span class="cousins_pedi">(<?= I18N::translate('half cousin') ?>)</span><?php endif ?>
+                        <?php if ($cousins_obj->showTypeLabels && $cousins_obj->fatherTypes[$cousin->xref()] === 'half'): ?><span class="cousins_pedi">(<?= I18N::translate('half cousin') ?>)</span><?php endif ?>
 			        </div>
                 <?php $i++; endforeach ?>
             </div>
@@ -52,7 +52,7 @@
                         <?php endif ?>
                         <span class="cousins_lifespan" ><?= $cousin->lifespan() ?></span>
                         <span class="cousins_pedi"><?= $module_obj->getChildLabel($cousin) ?></span>
-                        <?php if ($cousins_obj->showTypeLabels && $cousins_obj->types[$cousin->xref()] === 'half'): ?><span class="cousins_pedi">(<?= I18N::translate('half cousin') ?>)</span><?php endif ?>
+                        <?php if ($cousins_obj->showTypeLabels && $cousins_obj->motherTypes[$cousin->xref()] === 'half'): ?><span class="cousins_pedi">(<?= I18N::translate('half cousin') ?>)</span><?php endif ?>
 			        </div>
                 <?php $i++; endforeach ?>
             </div>
@@ -74,13 +74,15 @@
       tab.querySelectorAll(".vytux-cousins-option").forEach(function (o) {
         url.searchParams.set("include_" + o.dataset.option, o.checked ? "1" : "0");
       });
-      fetch(url).then(function (r) {
+      if (window.vytuxCousinsRequest) { window.vytuxCousinsRequest.abort(); }
+      var controller = window.vytuxCousinsRequest = new AbortController();
+      fetch(url, {signal: controller.signal}).then(function (r) {
         if (!r.ok) { throw new Error(r.status); }
         return r.text();
       }).then(function (html) {
         tab.outerHTML = html;
-      }).catch(function () {
-        box.checked = !box.checked;
+      }).catch(function (error) {
+        if (error.name !== "AbortError") { box.checked = !box.checked; }
       });
     });
   }
