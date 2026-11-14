@@ -163,29 +163,39 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
         return max(1, min(self::MAX_DEGREE, $degree));
     }
 
-    private function ordinal(int $degree): string
-    {
-        return match ($degree) {
-            1       => I18N::translate('first'),
-            2       => I18N::translate('second'),
-            3       => I18N::translate('third'),
-            4       => I18N::translate('fourth'),
-            default => I18N::translate('fifth'),
-        };
-    }
-
     /**
      * Label for a cousin of a given type and degree; empty for plain first cousins.
      */
     public function cousinLabel(string $type, int $degree): string
     {
-        if ($degree === 1) {
-            return $type === 'half' ? I18N::translate('half cousin') : '';
+        if ($type === 'half') {
+            return match ($degree) {
+                1       => I18N::translate('half cousin'),
+                2       => I18N::translate('second half cousin'),
+                3       => I18N::translate('third half cousin'),
+                4       => I18N::translate('fourth half cousin'),
+                default => I18N::translate('fifth half cousin'),
+            };
         }
 
-        return $type === 'half'
-            ? I18N::translate('%s half cousin', $this->ordinal($degree))
-            : I18N::translate('%s cousin', $this->ordinal($degree));
+        return match ($degree) {
+            1       => '',
+            2       => I18N::translate('second cousin'),
+            3       => I18N::translate('third cousin'),
+            4       => I18N::translate('fourth cousin'),
+            default => I18N::translate('fifth cousin'),
+        };
+    }
+
+    private function degreeChoiceLabel(int $degree): string
+    {
+        return match ($degree) {
+            1       => I18N::translate('First cousins'),
+            2       => I18N::translate('Up to second cousins'),
+            3       => I18N::translate('Up to third cousins'),
+            4       => I18N::translate('Up to fourth cousins'),
+            default => I18N::translate('Up to fifth cousins'),
+        };
     }
 
     private function getCousins(Individual $individual): object
@@ -208,9 +218,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
         $cousinsObj->degree = $this->maxDegree();
         $cousinsObj->degreeChoices = [];
         foreach (range(1, self::MAX_DEGREE) as $degree) {
-            $cousinsObj->degreeChoices[$degree] = $degree === 1
-                ? I18N::translate('First cousins')
-                : I18N::translate('Up to %s cousins', $this->ordinal($degree));
+            $cousinsObj->degreeChoices[$degree] = $this->degreeChoiceLabel($degree);
         }
         $cousinsObj->showTypeLabels = count($this->enabledCousinTypes()) > 1 || $cousinsObj->degree > 1;
         if ($individual->childFamilies()->first()) {
@@ -575,6 +583,20 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
                 . I18N::PLURAL . '%2$s turi %1$d įrašytų pirmos eilės pusbrolių/pusseserių',
             'Include half cousins' => 'Įtraukti pusbrolius/pusseseres per vieną bendrą senelį',
             'half cousin' => 'pusbrolis/pusseserė per vieną bendrą senelį',
+            'Cousin degree' => 'Pusbrolių/pusseserių eilė',
+            'First cousins' => 'Pirmos eilės pusbroliai/pusseserės',
+            'Up to second cousins' => 'Iki antros eilės pusbrolių/pusseserių',
+            'Up to third cousins' => 'Iki trečios eilės pusbrolių/pusseserių',
+            'Up to fourth cousins' => 'Iki ketvirtos eilės pusbrolių/pusseserių',
+            'Up to fifth cousins' => 'Iki penktos eilės pusbrolių/pusseserių',
+            'second cousin' => 'antros eilės pusbrolis/pusseserė',
+            'third cousin' => 'trečios eilės pusbrolis/pusseserė',
+            'fourth cousin' => 'ketvirtos eilės pusbrolis/pusseserė',
+            'fifth cousin' => 'penktos eilės pusbrolis/pusseserė',
+            'second half cousin' => 'antros eilės pusbrolis/pusseserė per vieną bendrą protėvį',
+            'third half cousin' => 'trečios eilės pusbrolis/pusseserė per vieną bendrą protėvį',
+            'fourth half cousin' => 'ketvirtos eilės pusbrolis/pusseserė per vieną bendrą protėvį',
+            'fifth half cousin' => 'penktos eilės pusbrolis/pusseserė per vieną bendrą protėvį',
             '%2$s has %1$d cousin recorded'
                 . I18N::PLURAL . '%2$s has %1$d cousins recorded' => '%2$s turi %1$d įrašytą pusbrolį/pusseserę'
                 . I18N::PLURAL . '%2$s turi %1$d įrašytus pusbrolius/pusseseres'
