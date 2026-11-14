@@ -9,6 +9,14 @@
             <label class="form-check-label" for="vytux_cousins_include_<?= e($key) ?>"><?= e($option['label']) ?></label>
         </div>
     <?php endforeach ?>
+    <div class="mb-3">
+        <label class="form-label" for="vytux_cousins_degree"><?= I18N::translate('Cousin degree') ?></label>
+        <select class="form-select vytux-cousins-degree w-auto" id="vytux_cousins_degree">
+            <?php foreach ($cousins_obj->degreeChoices as $degree => $label): ?>
+                <option value="<?= $degree ?>" <?= $degree === $cousins_obj->degree ? 'selected' : '' ?>><?= e($label) ?></option>
+            <?php endforeach ?>
+        </select>
+    </div>
     <?php if ($cousins_obj->self->childFamilies()->first()): ?>
     <?php $prev_fam_id = '-1'; ?>
 	    <h3><?php if ($cousins_obj->showTypeLabels): ?><?= I18N::plural('%2$s has %1$d cousin recorded', '%2$s has %1$d cousins recorded', $cousins_obj->allCousinCount, $cousins_obj->allCousinCount, $cousins_obj->self->fullName()) ?><?php else: ?><?= I18N::plural('%2$s has %1$d first cousin recorded', '%2$s has %1$d first cousins recorded', $cousins_obj->allCousinCount, $cousins_obj->allCousinCount, $cousins_obj->self->fullName()) ?><?php endif ?></h3>
@@ -30,7 +38,7 @@
                         <?php endif ?>
                         <span class="cousins_lifespan" ><?= $cousin->lifespan() ?></span>
                         <span class="cousins_pedi"><?= $module_obj->getChildLabel($cousin) ?></span>
-                        <?php if ($cousins_obj->showTypeLabels && $cousins_obj->fatherTypes[$cousin->xref()] === 'half'): ?><span class="cousins_pedi">(<?= I18N::translate('half cousin') ?>)</span><?php endif ?>
+                        <?php if ($cousins_obj->showTypeLabels && $module_obj->cousinLabel($cousins_obj->fatherTypes[$cousin->xref()]['type'], $cousins_obj->fatherTypes[$cousin->xref()]['degree']) !== ''): ?><span class="cousins_pedi">(<?= $module_obj->cousinLabel($cousins_obj->fatherTypes[$cousin->xref()]['type'], $cousins_obj->fatherTypes[$cousin->xref()]['degree']) ?>)</span><?php endif ?>
 			        </div>
                 <?php $i++; endforeach ?>
             </div>
@@ -52,7 +60,7 @@
                         <?php endif ?>
                         <span class="cousins_lifespan" ><?= $cousin->lifespan() ?></span>
                         <span class="cousins_pedi"><?= $module_obj->getChildLabel($cousin) ?></span>
-                        <?php if ($cousins_obj->showTypeLabels && $cousins_obj->motherTypes[$cousin->xref()] === 'half'): ?><span class="cousins_pedi">(<?= I18N::translate('half cousin') ?>)</span><?php endif ?>
+                        <?php if ($cousins_obj->showTypeLabels && $module_obj->cousinLabel($cousins_obj->motherTypes[$cousin->xref()]['type'], $cousins_obj->motherTypes[$cousin->xref()]['degree']) !== ''): ?><span class="cousins_pedi">(<?= $module_obj->cousinLabel($cousins_obj->motherTypes[$cousin->xref()]['type'], $cousins_obj->motherTypes[$cousin->xref()]['degree']) ?>)</span><?php endif ?>
 			        </div>
                 <?php $i++; endforeach ?>
             </div>
@@ -68,12 +76,14 @@
     window.vytuxCousinsInit = true;
     document.addEventListener("change", function (event) {
       var box = event.target;
-      if (!box.classList || !box.classList.contains("vytux-cousins-option")) { return; }
+      if (!box.classList || !(box.classList.contains("vytux-cousins-option") || box.classList.contains("vytux-cousins-degree"))) { return; }
       var tab = box.closest(".wt-tab-vytux-cousins");
       var url = new URL(tab.dataset.vytuxCousinsUrl, window.location.href);
       tab.querySelectorAll(".vytux-cousins-option").forEach(function (o) {
         url.searchParams.set("include_" + o.dataset.option, o.checked ? "1" : "0");
       });
+      var degree = tab.querySelector(".vytux-cousins-degree");
+      if (degree) { url.searchParams.set("max_degree", degree.value); }
       if (window.vytuxCousinsRequest) { window.vytuxCousinsRequest.abort(); }
       var controller = window.vytuxCousinsRequest = new AbortController();
       fetch(url, {signal: controller.signal}).then(function (r) {
@@ -82,7 +92,7 @@
       }).then(function (html) {
         tab.outerHTML = html;
       }).catch(function (error) {
-        if (error.name !== "AbortError") { box.checked = !box.checked; }
+        if (error.name !== "AbortError") { box.type === "checkbox" ? box.checked = !box.checked : box.value = box.defaultValue; }
       });
     });
   }

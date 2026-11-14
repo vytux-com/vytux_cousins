@@ -154,6 +154,40 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
         return false;
     }
 
+    private const MAX_DEGREE = 5;
+
+    private function maxDegree(): int
+    {
+        $degree = (int) Session::get('vytux_cousins_degree', 1);
+
+        return max(1, min(self::MAX_DEGREE, $degree));
+    }
+
+    private function ordinal(int $degree): string
+    {
+        return match ($degree) {
+            1       => I18N::translate('first'),
+            2       => I18N::translate('second'),
+            3       => I18N::translate('third'),
+            4       => I18N::translate('fourth'),
+            default => I18N::translate('fifth'),
+        };
+    }
+
+    /**
+     * Label for a cousin of a given type and degree; empty for plain first cousins.
+     */
+    public function cousinLabel(string $type, int $degree): string
+    {
+        if ($degree === 1) {
+            return $type === 'half' ? I18N::translate('half cousin') : '';
+        }
+
+        return $type === 'half'
+            ? I18N::translate('%s half cousin', $this->ordinal($degree))
+            : I18N::translate('%s cousin', $this->ordinal($degree));
+    }
+
     private function getCousins(Individual $individual): object
     {
         $cousinsObj = (object)[];
@@ -171,13 +205,20 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
                 $cousinsObj->options[$key] = ['label' => $type['label'], 'enabled' => $this->isTypeEnabled($key)];
             }
         }
-        $cousinsObj->showTypeLabels = count($this->enabledCousinTypes()) > 1;
+        $cousinsObj->degree = $this->maxDegree();
+        $cousinsObj->degreeChoices = [];
+        foreach (range(1, self::MAX_DEGREE) as $degree) {
+            $cousinsObj->degreeChoices[$degree] = $degree === 1
+                ? I18N::translate('First cousins')
+                : I18N::translate('Up to %s cousins', $this->ordinal($degree));
+        }
+        $cousinsObj->showTypeLabels = count($this->enabledCousinTypes()) > 1 || $cousinsObj->degree > 1;
         if ($individual->childFamilies()->first()) {
             $cousinsObj->father = $individual->childFamilies()->first()->husband();
             $cousinsObj->mother = $individual->childFamilies()->first()->wife();
 
-            $cousinsObj->fatherCousins = $this->cousinsViaParent($cousinsObj->father, $cousinsObj->fatherTypes);
-            $cousinsObj->motherCousins = $this->cousinsViaParent($cousinsObj->mother, $cousinsObj->motherTypes);
+            $cousinsObj->fatherCousins = $this->cousinsViaParent($individual, $cousinsObj->father, $cousinsObj->fatherTypes);
+            $cousinsObj->motherCousins = $this->cousinsViaParent($individual, $cousinsObj->mother, $cousinsObj->motherTypes);
             $cousinsObj->fathersCousinCount = count($cousinsObj->fatherCousins);
             $cousinsObj->mothersCousinCount = count($cousinsObj->motherCousins);
 
@@ -189,7 +230,8 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     }
 
     /**
-     * Cousin types. To add a new type (e.g. second cousins), add an entry here:
+     * Cousin types (degrees from first to MAX_DEGREE cousins are handled separately, see cousinsViaParent()).
+     * To add a new type, add an entry here:
      * 'siblings' returns the relatives of a parent whose children count as cousins of this type.
      * Types with 'optional' => true get a check-box on the tab; the choice is kept in the session.
      *
@@ -247,16 +289,24 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             }
         }
 
+        if (isset($query['max_degree'])) {
+            Session::put('vytux_cousins_degree', max(1, min(self::MAX_DEGREE, (int) $query['max_degree'])));
+        }
+
         return response($this->getTabContent($individual));
     }
 
     /**
-     * @param Individual|null       $parent
-     * @param array<string,string>  $types  xref => type key; filled with the cousins found via this parent (first type wins)
+     * Nth cousins are the descendants, N generations down, of the siblings of the
+     * individual's ancestor N-1 generations above the parent.
+     *
+     * @param Individual                                    $self
+     * @param Individual|null                               $parent
+     * @param array<string,array{type:string,degree:int}>   $types  xref => type and degree; filled with the cousins found via this parent (lowest degree, first type wins)
      *
      * @return array<Individual>
      */
-    private function cousinsViaParent(?Individual $parent, array &$types): array
+    private function cousinsViaParent(Individual $self, ?Individual $parent, array &$types): array
     {
         $cousins = [];
 
@@ -264,20 +314,49 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             return $cousins;
         }
 
-        foreach ($this->enabledCousinTypes() as $key => $type) {
-            foreach ($type['siblings']($parent) as $sibling) {
-                foreach ($sibling->spouseFamilies() as $fam) {
-                    foreach ($fam->children() as $child) {
-                        if (!isset($cousins[$child->xref()])) {
-                            $cousins[$child->xref()] = $child;
-                            $types[$child->xref()] ??= $key;
+        $walker    = $this->walker();
+        $ancestors = [$parent->xref() => $parent];
+
+        for ($degree = 1; $degree <= $this->maxDegree(); $degree++) {
+            foreach ($this->enabledCousinTypes() as $key => $type) {
+                foreach ($ancestors as $ancestor) {
+                    foreach ($type['siblings']($ancestor) as $sibling) {
+                        foreach ($walker->descendants($sibling, $degree) as $child) {
+                            if ($child !== $self && !isset($cousins[$child->xref()])) {
+                                $cousins[$child->xref()] = $child;
+                                $types[$child->xref()] = ['type' => $key, 'degree' => $degree];
+                            }
                         }
                     }
                 }
             }
+
+            $ancestors = $walker->parentsOf($ancestors);
         }
 
         return array_values($cousins);
+    }
+
+    private function walker(): CousinWalker
+    {
+        return new CousinWalker(
+            static function (Individual $person): array {
+                $family = $person->childFamilies()->first();
+
+                return array_values(array_filter([$family?->husband(), $family?->wife()]));
+            },
+            static function (Individual $person): array {
+                $children = [];
+                foreach ($person->spouseFamilies() as $fam) {
+                    foreach ($fam->children() as $child) {
+                        $children[] = $child;
+                    }
+                }
+
+                return $children;
+            },
+            static fn (Individual $person): string => $person->xref(),
+        );
     }
 
     /**

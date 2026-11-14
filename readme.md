@@ -12,6 +12,7 @@ Originally based on the `simpl_cousins` module by Nigel Osborne (kiwtrees.net), 
 
 - Lists first cousins, grouped by their parents' family, split into **Father's family** and **Mother's family**.
 - Optional **half cousins**: children of a parent's half-siblings (that is, cousins who share only one grandparent). Tick *Include half cousins* at the top of the tab. Half cousins are labelled in the list, and the choice is remembered for your browser session.
+- Optional **distant cousins**: choose *Cousin degree* at the top of the tab to include second, third, fourth and fifth cousins. Each is labelled by degree, and the choice is remembered for your browser session.
 - A cousin related through both parents is listed and counted on both sides, but only once in the overall total.
 - Respects webtrees privacy settings.
 - Translated into Czech, Chinese (Simplified and Traditional), Danish, Dutch, Finnish, French, German, Hebrew, Lithuanian, Norwegian (Bokmål and Nynorsk), Russian and Swedish. Strings without a translation fall back to English.
