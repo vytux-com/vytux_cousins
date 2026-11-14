@@ -54,7 +54,7 @@ Cousin types are defined in `cousinTypes()` in `src/VytuxCousinsTabModule.php`. 
 
 ## Translations
 
-Translations live in `src/VytuxCousinsTabModule.php`, one method per language. Pull requests adding or improving a language are welcome.
+Translations live in `src/VytuxCousinsTabModule.php`, one method per language. Cousin labels (e.g. `second cousin`) can also have gendered translations, keyed as `'MALE' . Translation::CONTEXT_SEPARATOR . 'second cousin'` (or `'FEMALE' …`); see the Lithuanian translations for an example. Pull requests adding or improving a language are welcome.
 
 ## Support
 
