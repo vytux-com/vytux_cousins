@@ -38,7 +38,8 @@
                         <?php endif ?>
                         <span class="cousins_lifespan" ><?= $cousin->lifespan() ?></span>
                         <span class="cousins_pedi"><?= $module_obj->getChildLabel($cousin) ?></span>
-                        <?php if ($cousins_obj->showTypeLabels && $module_obj->cousinLabel($cousins_obj->fatherTypes[$cousin->xref()]['type'], $cousins_obj->fatherTypes[$cousin->xref()]['degree']) !== ''): ?><span class="cousins_pedi">(<?= $module_obj->cousinLabel($cousins_obj->fatherTypes[$cousin->xref()]['type'], $cousins_obj->fatherTypes[$cousin->xref()]['degree']) ?>)</span><?php endif ?>
+                        <?php $label = $cousins_obj->showTypeLabels ? $module_obj->cousinLabel($cousins_obj->fatherTypes[$cousin->xref()]['type'], $cousins_obj->fatherTypes[$cousin->xref()]['degree'], $cousin->sex()) : ''; ?>
+                        <?php if ($label !== ''): ?><span class="cousins_pedi">(<?= e($label) ?>)</span><?php endif ?>
 			        </div>
                 <?php $i++; endforeach ?>
             </div>
@@ -60,7 +61,8 @@
                         <?php endif ?>
                         <span class="cousins_lifespan" ><?= $cousin->lifespan() ?></span>
                         <span class="cousins_pedi"><?= $module_obj->getChildLabel($cousin) ?></span>
-                        <?php if ($cousins_obj->showTypeLabels && $module_obj->cousinLabel($cousins_obj->motherTypes[$cousin->xref()]['type'], $cousins_obj->motherTypes[$cousin->xref()]['degree']) !== ''): ?><span class="cousins_pedi">(<?= $module_obj->cousinLabel($cousins_obj->motherTypes[$cousin->xref()]['type'], $cousins_obj->motherTypes[$cousin->xref()]['degree']) ?>)</span><?php endif ?>
+                        <?php $label = $cousins_obj->showTypeLabels ? $module_obj->cousinLabel($cousins_obj->motherTypes[$cousin->xref()]['type'], $cousins_obj->motherTypes[$cousin->xref()]['degree'], $cousin->sex()) : ''; ?>
+                        <?php if ($label !== ''): ?><span class="cousins_pedi">(<?= e($label) ?>)</span><?php endif ?>
 			        </div>
                 <?php $i++; endforeach ?>
             </div>

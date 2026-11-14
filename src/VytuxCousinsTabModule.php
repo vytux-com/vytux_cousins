@@ -164,27 +164,46 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     }
 
     /**
-     * Label for a cousin of a given type and degree; empty for plain first cousins.
+     * Label for a cousin of a given type, degree and sex; empty for plain first cousins.
      */
-    public function cousinLabel(string $type, int $degree): string
+    public function cousinLabel(string $type, int $degree, string $sex = 'U'): string
     {
         if ($type === 'half') {
-            return match ($degree) {
-                1       => I18N::translate('half cousin'),
-                2       => I18N::translate('second half cousin'),
-                3       => I18N::translate('third half cousin'),
-                4       => I18N::translate('fourth half cousin'),
-                default => I18N::translate('fifth half cousin'),
+            $message = match ($degree) {
+                1       => 'half cousin',
+                2       => 'second half cousin',
+                3       => 'third half cousin',
+                4       => 'fourth half cousin',
+                default => 'fifth half cousin',
+            };
+        } else {
+            $message = match ($degree) {
+                1       => '',
+                2       => 'second cousin',
+                3       => 'third cousin',
+                4       => 'fourth cousin',
+                default => 'fifth cousin',
             };
         }
 
-        return match ($degree) {
-            1       => '',
-            2       => I18N::translate('second cousin'),
-            3       => I18N::translate('third cousin'),
-            4       => I18N::translate('fourth cousin'),
-            default => I18N::translate('fifth cousin'),
+        if ($message === '') {
+            return '';
+        }
+
+        // Prefer a gendered translation (e.g. Lithuanian pusbrolis/pusseserė), falling back to the neutral one.
+        $context = match ($sex) {
+            'M'     => 'MALE',
+            'F'     => 'FEMALE',
+            default => '',
         };
+        if ($context !== '') {
+            $gendered = I18N::translateContext($context, $message);
+            if ($gendered !== $message) {
+                return $gendered;
+            }
+        }
+
+        return I18N::translate($message);
     }
 
     private function degreeChoiceLabel(int $degree): string
@@ -597,6 +616,24 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             'third half cousin' => 'trečios eilės pusbrolis/pusseserė per vieną bendrą protėvį',
             'fourth half cousin' => 'ketvirtos eilės pusbrolis/pusseserė per vieną bendrą protėvį',
             'fifth half cousin' => 'penktos eilės pusbrolis/pusseserė per vieną bendrą protėvį',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'half cousin' => 'pusbrolis per vieną bendrą senelį',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'half cousin' => 'pusseserė per vieną bendrą senelį',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'second cousin' => 'antros eilės pusbrolis',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'second cousin' => 'antros eilės pusseserė',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'third cousin' => 'trečios eilės pusbrolis',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'third cousin' => 'trečios eilės pusseserė',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'fourth cousin' => 'ketvirtos eilės pusbrolis',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'fourth cousin' => 'ketvirtos eilės pusseserė',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'fifth cousin' => 'penktos eilės pusbrolis',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'fifth cousin' => 'penktos eilės pusseserė',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'second half cousin' => 'antros eilės pusbrolis per vieną bendrą protėvį',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'second half cousin' => 'antros eilės pusseserė per vieną bendrą protėvį',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'third half cousin' => 'trečios eilės pusbrolis per vieną bendrą protėvį',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'third half cousin' => 'trečios eilės pusseserė per vieną bendrą protėvį',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'fourth half cousin' => 'ketvirtos eilės pusbrolis per vieną bendrą protėvį',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'fourth half cousin' => 'ketvirtos eilės pusseserė per vieną bendrą protėvį',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'fifth half cousin' => 'penktos eilės pusbrolis per vieną bendrą protėvį',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'fifth half cousin' => 'penktos eilės pusseserė per vieną bendrą protėvį',
             '%2$s has %1$d cousin recorded'
                 . I18N::PLURAL . '%2$s has %1$d cousins recorded' => '%2$s turi %1$d įrašytą pusbrolį/pusseserę'
                 . I18N::PLURAL . '%2$s turi %1$d įrašytus pusbrolius/pusseseres'
