@@ -12,7 +12,8 @@ Originally based on the `simpl_cousins` module by Nigel Osborne (kiwtrees.net), 
 
 - Lists first cousins, grouped by their parents' family, split into **Father's family** and **Mother's family**.
 - Optional **half cousins**: children of a parent's half-siblings (that is, cousins who share only one grandparent). Tick *Include half cousins* at the top of the tab. Half cousins are labelled in the list, and the choice is remembered for your browser session.
-- Optional **distant cousins**: choose *Cousin degree* at the top of the tab to include second, third, fourth and fifth cousins. Each is labelled by degree, and the choice is remembered for your browser session.
+- Optional **distant cousins**: choose *Cousin degree* at the top of the tab to include second, third, fourth and fifth cousins. Each is labelled by degree (for example "second cousin" or "third half cousin"), and the choice is remembered for your browser session. Ancestors are followed through each person's first (usually birth) parent family.
+- Cousin labels use the cousin's sex where the language needs it, for example *pusbrolis* or *pusseserė* in Lithuanian.
 - A cousin related through both parents is listed and counted on both sides, but only once in the overall total.
 - Respects webtrees privacy settings.
 - Translated into Czech, Chinese (Simplified and Traditional), Danish, Dutch, Finnish, French, German, Hebrew, Lithuanian, Norwegian (Bokmål and Nynorsk), Russian and Swedish. Strings without a translation fall back to English.
@@ -50,7 +51,20 @@ With Composer run `composer update vytux/vytux_cousins`. Otherwise replace the m
 
 ## Adding more cousin types
 
-Cousin types are defined in `cousinTypes()` in `src/VytuxCousinsTabModule.php`. Each type describes which relatives of a parent count as the starting point. Types marked `optional` automatically get a check-box on the tab. This makes it straightforward to add further types, for example second cousins.
+Cousin types are defined in `cousinTypes()` in `src/VytuxCousinsTabModule.php`. Each type describes which relatives of an ancestor count as the starting point (full siblings for ordinary cousins, half-siblings for half cousins). Types marked `optional` automatically get a check-box on the tab, and every type works at each cousin degree.
+
+The degree is handled separately: Nth cousins are found by walking up N−1 generations from each parent, taking that ancestor's siblings and walking N generations down. The generation walking lives in `src/CousinWalker.php`, and the highest degree offered is `MAX_DEGREE` in `src/VytuxCousinsTabModule.php`.
+
+## Development
+
+Run the unit tests with:
+
+```
+composer install
+composer test
+```
+
+CI runs these tests on PHP 8.3 to 8.6 for every push and pull request.
 
 ## Translations
 
