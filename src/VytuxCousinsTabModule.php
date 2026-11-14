@@ -97,7 +97,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
      */
     public function customModuleVersion(): string
     {
-        return '2.2.1';
+        return '2.2.2';
     }
 
     /**
