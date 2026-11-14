@@ -87,12 +87,18 @@
       if (window.vytuxCousinsRequest) { window.vytuxCousinsRequest.abort(); }
       var controller = window.vytuxCousinsRequest = new AbortController();
       fetch(url, {signal: controller.signal}).then(function (r) {
-        if (!r.ok) { throw new Error(r.status); }
+        if (!r.ok) { return r.text().then(function (body) { throw new Error(r.status + " " + body.substring(0, 500)); }); }
         return r.text();
       }).then(function (html) {
         tab.outerHTML = html;
       }).catch(function (error) {
-        if (error.name !== "AbortError") { box.type === "checkbox" ? box.checked = !box.checked : box.value = box.defaultValue; }
+        if (error.name === "AbortError") { return; }
+        console.error("vytux_cousins: failed to refresh the tab", error);
+        if (box.type === "checkbox") {
+          box.checked = !box.checked;
+        } else {
+          box.querySelectorAll("option").forEach(function (o) { o.selected = o.defaultSelected; });
+        }
       });
     });
   }
