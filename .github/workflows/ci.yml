@@ -18,3 +18,7 @@ jobs:
       - run: composer validate --strict
       - run: php -l module.php
       - run: php -l src/VytuxCousinsTabModule.php
+      - run: php -l src/CousinWalker.php
+      # The module installer plugin declares php 8.3 - 8.5 only, which blocks the 8.6 dev job.
+      - run: composer install --no-interaction --no-progress --ignore-platform-req=php
+      - run: composer test
