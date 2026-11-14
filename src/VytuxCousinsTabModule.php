@@ -50,6 +50,7 @@ use Fisharebest\Webtrees\View;
 use Fisharebest\Localization\Translation;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
 
 /**
  * vytux_cousins module
@@ -310,6 +311,11 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
         $individual = Registry::individualFactory()->make((string) ($query['xref'] ?? ''), $tree);
         $individual = Auth::checkIndividualAccess($individual);
 
+        // Persist the new choices, but roll them back if the tab cannot be rendered with them.
+        $keys     = array_map(fn (string $key): string => 'vytux_cousins_include_' . $key, array_keys($this->cousinTypes()));
+        $keys[]   = 'vytux_cousins_degree';
+        $previous = array_combine($keys, array_map(fn (string $key): mixed => Session::get($key), $keys));
+
         foreach ($this->cousinTypes() as $key => $type) {
             if ($type['optional'] && isset($query['include_' . $key])) {
                 Session::put('vytux_cousins_include_' . $key, $query['include_' . $key] === '1' ? '1' : '0');
@@ -320,7 +326,15 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             Session::put('vytux_cousins_degree', max(1, min(self::MAX_DEGREE, (int) $query['max_degree'])));
         }
 
-        return response($this->getTabContent($individual));
+        try {
+            return response($this->getTabContent($individual));
+        } catch (Throwable $exception) {
+            foreach ($previous as $key => $value) {
+                $value === null ? Session::forget($key) : Session::put($key, $value);
+            }
+
+            throw $exception;
+        }
     }
 
     /**
@@ -367,6 +381,8 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
     private function walker(): CousinWalker
     {
         return new CousinWalker(
+            // Like the tab itself (father/mother) and fullSiblings()/halfSiblings(), only each person's
+            // first parent family is followed, so birth and adoptive lines are never mixed.
             static function (Individual $person): array {
                 $family = $person->childFamilies()->first();
 

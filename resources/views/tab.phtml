@@ -76,16 +76,20 @@
 <script>
   if (!window.vytuxCousinsInit) {
     window.vytuxCousinsInit = true;
-    document.addEventListener("change", function (event) {
-      var box = event.target;
-      if (!box.classList || !(box.classList.contains("vytux-cousins-option") || box.classList.contains("vytux-cousins-degree"))) { return; }
-      var tab = box.closest(".wt-tab-vytux-cousins");
+    function vytuxCousinsUrl(tab) {
       var url = new URL(tab.dataset.vytuxCousinsUrl, window.location.href);
       tab.querySelectorAll(".vytux-cousins-option").forEach(function (o) {
         url.searchParams.set("include_" + o.dataset.option, o.checked ? "1" : "0");
       });
       var degree = tab.querySelector(".vytux-cousins-degree");
       if (degree) { url.searchParams.set("max_degree", degree.value); }
+      return url;
+    }
+    document.addEventListener("change", function (event) {
+      var box = event.target;
+      if (!box.classList || !(box.classList.contains("vytux-cousins-option") || box.classList.contains("vytux-cousins-degree"))) { return; }
+      var tab = box.closest(".wt-tab-vytux-cousins");
+      var url = vytuxCousinsUrl(tab);
       if (window.vytuxCousinsRequest) { window.vytuxCousinsRequest.abort(); }
       var controller = window.vytuxCousinsRequest = new AbortController();
       fetch(url, {signal: controller.signal}).then(function (r) {
@@ -94,6 +98,7 @@
       }).then(function (html) {
         tab.outerHTML = html;
       }).catch(function (error) {
+        // An aborted request is always superseded by a newer one carrying the full current state.
         if (error.name === "AbortError") { return; }
         console.error("vytux_cousins: failed to refresh the tab", error);
         if (box.type === "checkbox") {
@@ -101,6 +106,8 @@
         } else {
           box.querySelectorAll("option").forEach(function (o) { o.selected = o.defaultSelected; });
         }
+        // The server may have saved the failed choice before the response was lost, so re-save the restored one.
+        fetch(vytuxCousinsUrl(tab)).catch(function () {});
       });
     });
   }
