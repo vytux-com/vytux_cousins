@@ -755,7 +755,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
         // Note the special characters used in plural and context-sensitive translations.
         return [
             'Cousins' => 'Søskenbarn',
-            'A tab showing cousins of an individual.' => 'Fane som viser en persons søskenbarn.',
+            'A tab showing cousins of an individual.' => 'En fane som viser søskenbarn til en person.',
             'No family available' => 'Ingen familie tilgjengelig',
             'Father\'s family (%s)' => 'Fars familie (%s)',
             'Mother\'s family (%s)' => 'Mors familie (%s)',
@@ -764,8 +764,40 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
                 . I18N::PLURAL . '%2$s har %1$d registrerte søskenbarn',
             'Include half cousins' => 'Inkluder halvsøskenbarn',
             'half cousin' => 'halvsøskenbarn',
-			'%2$s has %1$d cousin recorded'
-			    . I18N::PLURAL . '%2$s has %1$d cousins recorded' => '%2$s har %1$d registrert søskenbarn'
+            'Cousin degree' => 'Utvid:',
+            'First cousins' => 'Søskenbarn',
+            'Up to second cousins' => 'Opptil tremenninger',
+            'Up to third cousins' => 'Opptil firmenninger',
+            'Up to fourth cousins' => 'Opptil femmenninger',
+            'Up to fifth cousins' => 'Opptil seksmenninger',
+            'second cousin' => 'tremenning',
+            'third cousin' => 'firmenning',
+            'fourth cousin' => 'femmenning',
+            'fifth cousin' => 'seksmenning',
+            'second half cousin' => 'halvtremenning',
+            'third half cousin' => 'halvfirmenning',
+            'fourth half cousin' => 'halvfemmenning',
+            'fifth half cousin' => 'halvseksmenning',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'half cousin' => 'halvsøskenbarn',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'half cousin' => 'halvsøskenbarn',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'second cousin' => 'tremenning',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'second cousin' => 'tremenning',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'third cousin' => 'firmenning',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'third cousin' => 'firmenning',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'fourth cousin' => 'femmenning',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'fourth cousin' => 'femmenning',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'fifth cousin' => 'seksmenning',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'fifth cousin' => 'seksmenning',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'second half cousin' => 'halvtremenning',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'second half cousin' => 'halvtremenning',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'third half cousin' => 'halvfirmenning',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'third half cousin' => 'halvfirmenning',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'fourth half cousin' => 'halvfemmenning',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'fourth half cousin' => 'halvfemmenning',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'fifth half cousin' => 'halvseksmenning',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'fifth half cousin' => 'halvseksmenning',
+            '%2$s has %1$d cousin recorded'
+                . I18N::PLURAL . '%2$s has %1$d cousins recorded' => '%2$s har %1$d registrert søskenbarn'
                 . I18N::PLURAL . '%2$s har %1$d registrerte søskenbarn',
         ];
     }
@@ -778,7 +810,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
         // Note the special characters used in plural and context-sensitive translations.
         return [
             'Cousins' => 'Syskenborn',
-            'A tab showing cousins of an individual.' => 'Fane som syner ein person sine syskenborn.',
+            'A tab showing cousins of an individual.' => 'Ei fane som viser syskenborn til en person.',
             'No family available' => 'Ingen familie tilgjengeleg',
             'Father\'s family (%s)' => 'Fars familie (%s)',
             'Mother\'s family (%s)' => 'Mors familie (%s)',
@@ -787,8 +819,40 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
                 . I18N::PLURAL . '%2$s har %1$d registrerte syskenborn',
             'Include half cousins' => 'Inkluder halvsyskenborn',
             'half cousin' => 'halvsyskenbarn',
-			'%2$s has %1$d cousin recorded'
-			    . I18N::PLURAL . '%2$s has %1$d cousins recorded' => '%2$s har %1$d registrert syskenbarn'
+            'Cousin degree' => 'Utvid:',
+            'First cousins' => 'Syskenborn',
+            'Up to second cousins' => 'Opptil tremenningar',
+            'Up to third cousins' => 'Opptil firmenningar',
+            'Up to fourth cousins' => 'Opptil femmenningar',
+            'Up to fifth cousins' => 'Opptil seksmenningar',
+            'second cousin' => 'tremenning',
+            'third cousin' => 'firmenning',
+            'fourth cousin' => 'femmenning',
+            'fifth cousin' => 'seksmenning',
+            'second half cousin' => 'halvtremenning',
+            'third half cousin' => 'halvfirmenning',
+            'fourth half cousin' => 'halvfemmenning',
+            'fifth half cousin' => 'halvseksmenning',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'half cousin' => 'halvsyskenbarn',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'half cousin' => 'halvsyskenbarn',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'second cousin' => 'tremenning',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'second cousin' => 'tremenning',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'third cousin' => 'firmenning',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'third cousin' => 'firmenning',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'fourth cousin' => 'femmenning',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'fourth cousin' => 'femmenning',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'fifth cousin' => 'seksmenning',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'fifth cousin' => 'seksmenning',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'second half cousin' => 'halvtremenning',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'second half cousin' => 'halvtremenning',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'third half cousin' => 'halvfirmenning',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'third half cousin' => 'halvfirmenning',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'fourth half cousin' => 'halvfemmenning',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'fourth half cousin' => 'halvfemmenning',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'fifth half cousin' => 'halvseksmenning',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'fifth half cousin' => 'halvseksmenning',
+            '%2$s has %1$d cousin recorded'
+                . I18N::PLURAL . '%2$s has %1$d cousins recorded' => '%2$s har %1$d registrert syskenbarn'
                 . I18N::PLURAL . '%2$s har %1$d registrerte syskenborn',
         ];
     }
