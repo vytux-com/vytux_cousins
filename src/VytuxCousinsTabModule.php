@@ -764,8 +764,8 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
                 . I18N::PLURAL . '%2$s har %1$d registrerte søskenbarn',
             'Include half cousins' => 'Inkluder halvsøskenbarn',
             'half cousin' => 'halvsøskenbarn',
-			'%2$s has %1$d cousin recorded'
-			    . I18N::PLURAL . '%2$s has %1$d cousins recorded' => '%2$s har %1$d registrert søskenbarn'
+            '%2$s has %1$d cousin recorded'
+                . I18N::PLURAL . '%2$s has %1$d cousins recorded' => '%2$s har %1$d registrert søskenbarn'
                 . I18N::PLURAL . '%2$s har %1$d registrerte søskenbarn',
         ];
     }
@@ -787,8 +787,8 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
                 . I18N::PLURAL . '%2$s har %1$d registrerte syskenborn',
             'Include half cousins' => 'Inkluder halvsyskenborn',
             'half cousin' => 'halvsyskenbarn',
-			'%2$s has %1$d cousin recorded'
-			    . I18N::PLURAL . '%2$s has %1$d cousins recorded' => '%2$s har %1$d registrert syskenbarn'
+            '%2$s has %1$d cousin recorded'
+                . I18N::PLURAL . '%2$s has %1$d cousins recorded' => '%2$s har %1$d registrert syskenbarn'
                 . I18N::PLURAL . '%2$s har %1$d registrerte syskenborn',
         ];
     }
@@ -810,6 +810,38 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
                 . I18N::PLURAL . '%2$s heeft %1$d volle neven en nichten geregistreerd',
             'Include half cousins' => 'Halfneven/-nichten opnemen',
             'half cousin' => 'halfneef/-nicht',
+            'Cousin degree' => 'Graad van verwantschap',
+            'First cousins' => 'Volle neven/nichten',
+            'Up to second cousins' => 'Tot en met neven/nichten 2e graad',
+            'Up to third cousins' => 'Tot en met neven/nichten 3e graad',
+            'Up to fourth cousins' => 'Tot en met neven/nichten 4e graad',
+            'Up to fifth cousins' => 'Tot en met neven/nichten 5e graad',
+            'second cousin' => 'neef/nicht 2e graad',
+            'third cousin' => 'neef/nicht 3e graad',
+            'fourth cousin' => 'neef/nicht 4e graad',
+            'fifth cousin' => 'neef/nicht 5e graad',
+            'second half cousin' => 'halfneef/-nicht 2e graad',
+            'third half cousin' => 'halfneef/-nicht 3e graad',
+            'fourth half cousin' => 'halfneef/-nicht 4e graad',
+            'fifth half cousin' => 'halfneef/-nicht 5e graad',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'half cousin' => 'halfneef',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'half cousin' => 'halfnicht',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'second cousin' => 'neef 2e graad',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'second cousin' => 'nicht 2e graad',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'third cousin' => 'neef 3e graad',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'third cousin' => 'nicht 3e graad',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'fourth cousin' => 'neef 4e graad',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'fourth cousin' => 'nicht 4e graad',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'fifth cousin' => 'neef 5e graad',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'fifth cousin' => 'nicht 5e graad',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'second half cousin' => 'halfneef 2e graad',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'second half cousin' => 'halfnicht 2e graad',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'third half cousin' => 'halfneef 3e graad',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'third half cousin' => 'halfnicht 3e graad',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'fourth half cousin' => 'halfneef 4e graad',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'fourth half cousin' => 'halfnicht 4e graad',
+            'MALE' . Translation::CONTEXT_SEPARATOR . 'fifth half cousin' => 'halfneef 5e graad',
+            'FEMALE' . Translation::CONTEXT_SEPARATOR . 'fifth half cousin' => 'halfnicht 5e graad',
             '%2$s has %1$d cousin recorded'
                 . I18N::PLURAL . '%2$s has %1$d cousins recorded' => '%2$s heeft %1$d neef of nicht geregistreerd'
                 . I18N::PLURAL . '%2$s heeft %1$d neven en nichten geregistreerd',
