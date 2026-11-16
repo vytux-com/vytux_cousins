@@ -679,7 +679,10 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
                 . I18N::PLURAL . '%2$s has %1$d cousins recorded' => '%2$s turi %1$d įrašytą pusbrolį/pusseserę'
                 . I18N::PLURAL . '%2$s turi %1$d įrašytus pusbrolius/pusseseres'
                 . I18N::PLURAL . '%2$s turi %1$d įrašytų pusbrolių/pusseserių',
-        ];
+            '%2$s has %1$d relative recorded'
+                . I18N::PLURAL . '%2$s has %1$d relatives recorded' => '%2$s turi %1$d įrašytą giminaitį'
+                . I18N::PLURAL . '%2$s turi %1$d įrašytus giminaičius'
+                . I18N::PLURAL . '%2$s turi %1$d įrašytų giminaičių',
     }
 
     /**
@@ -806,6 +809,9 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             '%2$s has %1$d cousin recorded'
                 . I18N::PLURAL . '%2$s has %1$d cousins recorded' => '%2$s har %1$d registrert søskenbarn'
                 . I18N::PLURAL . '%2$s har %1$d registrerte søskenbarn',
+            '%2$s has %1$d relative recorded'
+                . I18N::PLURAL . '%2$s has %1$d relatives recorded' => '%2$s har %1$d registrert søskenbarn eller -menning'
+                . I18N::PLURAL . '%2$s har %1$d registrerte søskenbarn og -menninger',
         ];
     }
 
@@ -843,6 +849,9 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             '%2$s has %1$d cousin recorded'
                 . I18N::PLURAL . '%2$s has %1$d cousins recorded' => '%2$s har %1$d registrert syskenbarn'
                 . I18N::PLURAL . '%2$s har %1$d registrerte syskenborn',
+            '%2$s has %1$d relative recorded'
+                . I18N::PLURAL . '%2$s has %1$d relatives recorded' => '%2$s har %1$d registrert syskenbarn eller -menning'
+                . I18N::PLURAL . '%2$s har %1$d registrerte syskenborn og -menningar',
         ];
     }
 
