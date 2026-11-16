@@ -254,7 +254,32 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             $cousinsObj->allCousinCount = count($cousinsObj->fatherTypes + $cousinsObj->motherTypes);
         }
 
+        $cousinsObj->heading = $this->countHeading($cousinsObj);
+
         return $cousinsObj;
+    }
+
+    private function countHeading(object $cousinsObj): string
+    {
+        $count = $cousinsObj->allCousinCount;
+        $name  = $cousinsObj->self->fullName();
+
+        if (!$cousinsObj->showTypeLabels) {
+            return I18N::plural('%2$s has %1$d first cousin recorded', '%2$s has %1$d first cousins recorded', $count, $count, $name);
+        }
+
+        // Half and distant cousins are not all "cousins" in every language, so use a broader wording.
+        $one   = '%2$s has %1$d relative recorded';
+        $other = '%2$s has %1$d relatives recorded';
+        $text  = I18N::plural($one, $other, $count, $count, $name);
+
+        // Languages without a translation of the broader wording keep the older cousin wording.
+        $untranslated = $text === sprintf($count === 1 ? $one : $other, $count, $name);
+        if ($untranslated && !str_starts_with(I18N::languageTag(), 'en')) {
+            return I18N::plural('%2$s has %1$d cousin recorded', '%2$s has %1$d cousins recorded', $count, $count, $name);
+        }
+
+        return $text;
     }
 
     /**
