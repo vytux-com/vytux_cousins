@@ -792,7 +792,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
         // Note the special characters used in plural and context-sensitive translations.
         return [
             'Cousins' => 'Syskenborn',
-            'A tab showing cousins of an individual.' => 'Ei fane som viser syskenborn til en person.',
+            'A tab showing cousins of an individual.' => 'Ei fane som viser syskenborn til ein person.',
             'No family available' => 'Ingen familie tilgjengeleg',
             'Father\'s family (%s)' => 'Fars familie (%s)',
             'Mother\'s family (%s)' => 'Mors familie (%s)',
