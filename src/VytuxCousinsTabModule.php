@@ -780,7 +780,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             'fifth half cousin' => 'halvseksmenning',
             '%2$s has %1$d cousin recorded'
                 . I18N::PLURAL . '%2$s has %1$d cousins recorded' => '%2$s har %1$d registrert søskenbarn'
-                . I18N::PLURAL . '%2$s har %1$d registrerte søskenbarn, halvsøskenbarn og -menninger',
+                . I18N::PLURAL . '%2$s har %1$d registrerte søskenbarn',
         ];
     }
 
@@ -817,7 +817,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             'fifth half cousin' => 'halvseksmenning',
             '%2$s has %1$d cousin recorded'
                 . I18N::PLURAL . '%2$s has %1$d cousins recorded' => '%2$s har %1$d registrert syskenbarn'
-                . I18N::PLURAL . '%2$s har %1$d registrerte syskenborn, halvsyskenborn og -menningar',
+                . I18N::PLURAL . '%2$s har %1$d registrerte syskenborn',
         ];
     }
 
