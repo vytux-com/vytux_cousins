@@ -792,7 +792,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
         // Note the special characters used in plural and context-sensitive translations.
         return [
             'Cousins' => 'Syskenborn',
-            'A tab showing cousins of an individual.' => 'Ei fane som viser syskenborn til ein person.',
+            'A tab showing cousins of an individual.' => 'Ei fane som viser syskenborn til en person.',
             'No family available' => 'Ingen familie tilgjengeleg',
             'Father\'s family (%s)' => 'Fars familie (%s)',
             'Mother\'s family (%s)' => 'Mors familie (%s)',
@@ -800,7 +800,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
                 . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s har %1$d registrert syskenbarn'
                 . I18N::PLURAL . '%2$s har %1$d registrerte syskenborn',
             'Include half cousins' => 'Inkluder halvsyskenborn',
-            'half cousin' => 'halvsyskenborn',
+            'half cousin' => 'halvsyskenbarn',
             'Cousin degree' => 'Grad av slektskap',
             'First cousins' => 'Syskenborn',
             'Up to second cousins' => 'Opptil tremenningar',
@@ -816,7 +816,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             'fourth half cousin' => 'halvfemmenning',
             'fifth half cousin' => 'halvseksmenning',
             '%2$s has %1$d cousin recorded'
-                . I18N::PLURAL . '%2$s has %1$d cousins recorded'                 => '%2$s har %1$d registrert syskenborn'
+                . I18N::PLURAL . '%2$s has %1$d cousins recorded' => '%2$s har %1$d registrert syskenbarn'
                 . I18N::PLURAL . '%2$s har %1$d registrerte syskenborn',
         ];
     }
