@@ -683,6 +683,7 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
                 . I18N::PLURAL . '%2$s has %1$d relatives recorded' => '%2$s turi %1$d įrašytą giminaitį'
                 . I18N::PLURAL . '%2$s turi %1$d įrašytus giminaičius'
                 . I18N::PLURAL . '%2$s turi %1$d įrašytų giminaičių',
+        ];
     }
 
     /**
