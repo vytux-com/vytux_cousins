@@ -19,7 +19,7 @@
     </div>
     <?php if ($cousins_obj->self->childFamilies()->first()): ?>
     <?php $prev_fam_id = '-1'; ?>
-	    <h3><?php if ($cousins_obj->showTypeLabels): ?><?= I18N::plural('%2$s has %1$d cousin recorded', '%2$s has %1$d cousins recorded', $cousins_obj->allCousinCount, $cousins_obj->allCousinCount, $cousins_obj->self->fullName()) ?><?php else: ?><?= I18N::plural('%2$s has %1$d first cousin recorded', '%2$s has %1$d first cousins recorded', $cousins_obj->allCousinCount, $cousins_obj->allCousinCount, $cousins_obj->self->fullName()) ?><?php endif ?></h3>
+	    <h3><?= $cousins_obj->heading ?></h3>
         <div id="vytux_cousins_content">
             <div id="cousins_f">
                 <h4><?=I18N::translate('Father\'s family (%s)', $cousins_obj->fathersCousinCount)?></h4>
