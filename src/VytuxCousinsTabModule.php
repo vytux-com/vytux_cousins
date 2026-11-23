@@ -627,6 +627,9 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             case 'zh-Hant':
                 return $this->hantTranslations();
 
+            case 'uz':
+                return $this->uzbekTranslations();
+
             default:
                 return [];
         }
@@ -1007,6 +1010,46 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             'Mother\'s family (%s)' => '母親的家庭 (%s)',
             '%2$s has %1$d first cousin recorded'
                 . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s 有 %1$d 個第一代堂表親',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function uzbekTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => 'Amakilar',
+            'A tab showing cousins of an individual.' => 'Shaxsning amakilarini ko\'rsatadigan yorliq.',
+            'No family available' => 'Oila mavjud emas',
+            'Father\'s family (%s)' => 'Ota oilasi (%s)',
+            'Mother\'s family (%s)' => 'Ona oilasi (%s)',
+            '%2$s has %1$d first cousin recorded'
+                . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s uchun %1$d ta birinchi amakilar qayd etilgan'
+                . I18N::PLURAL . '%2$s uchun %1$d ta birinchi amakilar qayd etilgan',
+            'Include half cousins' => 'Yarim amakilarni ham qo\'shish',
+            'half cousin' => 'yarim amakilar',
+            'Cousin degree' => 'Amakilar darajasi',
+            'First cousins' => 'Birinchi amakilar',
+            'Up to second cousins' => 'Ikkinchi amakilargacha',
+            'Up to third cousins' => 'Uchinchi amakilargacha',
+            'Up to fourth cousins' => 'To\'rtinchi amakilargacha',
+            'Up to fifth cousins' => 'Beshinchi amakilargacha',
+            'second cousin' => 'ikkinchi amakilar',
+            'third cousin' => 'uchinchi amakilar',
+            'fourth cousin' => 'to\'rtinchi amakilar',
+            'fifth cousin' => 'beshinchi amakilar',
+            'second half cousin' => 'ikkinchi yarim amakilar',
+            'third half cousin' => 'uchinchi yarim amakilar',
+            'fourth half cousin' => 'to\'rtinchi yarim amakilar',
+            'fifth half cousin' => 'beshinchi yarim amakilar',
+            '%2$s has %1$d cousin recorded'
+                . I18N::PLURAL . '%2$s has %1$d cousins recorded' => '%2$s uchun %1$d ta amakilar qayd etilgan'
+                . I18N::PLURAL . '%2$s uchun %1$d ta amakilar qayd etilgan',
+            '%2$s has %1$d relative recorded'
+                . I18N::PLURAL . '%2$s has %1$d relatives recorded' => '%2$s uchun %1$d ta qarindosh qayd etilgan'
+                . I18N::PLURAL . '%2$s uchun %1$d ta qarindosh qayd etilgan',
         ];
     }
 };
