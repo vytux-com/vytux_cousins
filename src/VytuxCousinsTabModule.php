@@ -630,6 +630,12 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             case 'uz':
                 return $this->uzbekTranslations();
 
+            case 'pt':
+                return $this->portugueseTranslations();
+
+            case 'yi':
+                return $this->yiddishTranslations();
+
             default:
                 return [];
         }
@@ -1010,6 +1016,46 @@ class VytuxCousinsTabModule extends AbstractModule implements ModuleTabInterface
             'Mother\'s family (%s)' => '母親的家庭 (%s)',
             '%2$s has %1$d first cousin recorded'
                 . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s 有 %1$d 個第一代堂表親',
+        ];
+    }
+
+    /**
+     * Yiddish translation contributed by Meliza Amity.
+     *
+     * @return array
+     */
+    protected function yiddishTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => 'קוזינען',
+            'A tab showing cousins of an individual.' => 'אַ זייַטל וואָס פֿאָרשטעלט די קוזינען.',
+            'No family available' => 'קיין משפּחה בנימצא',
+            'Father\'s family (%s)' => 'פֿאָטערס משפּחה (%s)',
+            'Mother\'s family (%s)' => 'מוטערס משפּחה (%s)',
+            '%2$s has %1$d first cousin recorded'
+                . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s האָט איין ערשטע קוזין'
+                . I18N::PLURAL . '%2$s האָט %1$d ערשטער קאזאנז',
+        ];
+    }
+
+    /**
+     * Portuguese translation contributed by José Grincho.
+     *
+     * @return array
+     */
+    protected function portugueseTranslations(): array
+    {
+        // Note the special characters used in plural and context-sensitive translations.
+        return [
+            'Cousins' => 'Primos',
+            'A tab showing cousins of an individual.' => 'Uma tab que mostra os primos de um indivíduo.',
+            'No family available' => 'Família não encontrada',
+            'Father\'s family (%s)' => 'Lado do Pai (%s)',
+            'Mother\'s family (%s)' => 'Lado da Mãe (%s)',
+            '%2$s has %1$d first cousin recorded'
+                . I18N::PLURAL . '%2$s has %1$d first cousins recorded' => '%2$s tem %1$d primo direito registado'
+                . I18N::PLURAL . '%2$s tem %1$d primos direitos registados',
         ];
     }
 

@@ -16,7 +16,7 @@ Originally based on the `simpl_cousins` module by Nigel Osborne (kiwtrees.net), 
 - Cousin labels use the cousin's sex where the language needs it, for example *pusbrolis* or *pusseserė* in Lithuanian.
 - A cousin related through both parents is listed and counted on both sides, but only once in the overall total.
 - Respects webtrees privacy settings.
-- Translated into Czech, Chinese (Simplified and Traditional), Danish, Dutch, Finnish, French, German, Hebrew, Lithuanian, Norwegian (Bokmål and Nynorsk), Russian and Swedish. Strings without a translation fall back to English.
+- Translated into Czech, Chinese (Simplified and Traditional), Danish, Dutch, Finnish, French, German, Hebrew, Lithuanian, Norwegian (Bokmål and Nynorsk), Portuguese (thanks to José Grincho), Russian, Swedish and Yiddish (thanks to Meliza Amity). Strings without a translation fall back to English.
 
 ## Requirements
 
